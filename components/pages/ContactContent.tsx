@@ -7,14 +7,36 @@ import { ArrowRight, Check } from "lucide-react";
 import PageShell from "@/components/PageShell";
 import PageHeader from "@/components/PageHeader";
 import { revealVariants } from "@/lib/motion";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
 export default function ContactContent() {
   const [submitted, setSubmitted] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: write the lead into Supabase (leads table) once the project is connected.
+    setError(null);
+    setLoading(true);
+
+    if (isSupabaseConfigured()) {
+      const supabase = createClient();
+      const { error } = await supabase.from("leads").insert({
+        name: name.trim(),
+        email: email.trim(),
+        message: message.trim(),
+      });
+      if (error) {
+        setError("Something went wrong — please email us directly.");
+        setLoading(false);
+        return;
+      }
+    }
     setSubmitted(true);
+    setLoading(false);
   };
 
   return (
@@ -58,6 +80,8 @@ export default function ContactContent() {
                   id="contact-name"
                   type="text"
                   required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   placeholder="Jane Smith"
                   className="w-full rounded-full border border-black/15 bg-white/40 px-5 py-3 text-black placeholder-black/40 outline-none focus:border-black/40 transition-colors duration-300"
                 />
@@ -70,6 +94,8 @@ export default function ContactContent() {
                   id="contact-email"
                   type="email"
                   required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="jane@company.com"
                   className="w-full rounded-full border border-black/15 bg-white/40 px-5 py-3 text-black placeholder-black/40 outline-none focus:border-black/40 transition-colors duration-300"
                 />
@@ -82,15 +108,21 @@ export default function ContactContent() {
                   id="contact-message"
                   required
                   rows={4}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
                   placeholder="Tell us about your brand and goals"
                   className="w-full rounded-2xl border border-black/15 bg-white/40 px-5 py-3 text-black placeholder-black/40 outline-none focus:border-black/40 transition-colors duration-300 resize-none"
                 />
               </div>
+              {error && (
+                <p className="text-[#8A3220] text-sm leading-relaxed">{error}</p>
+              )}
               <button
                 type="submit"
-                className="inline-flex items-center justify-center gap-3 bg-black text-white text-base font-medium pl-8 pr-2 py-2 rounded-full hover:bg-[#8A3220] transition-colors duration-200 w-fit mt-2"
+                disabled={loading}
+                className="inline-flex items-center justify-center gap-3 bg-black text-white text-base font-medium pl-8 pr-2 py-2 rounded-full hover:bg-[#8A3220] transition-colors duration-200 w-fit mt-2 disabled:opacity-60"
               >
-                Send Message
+                {loading ? "Sending…" : "Send Message"}
                 <span className="bg-white rounded-full p-2">
                   <ArrowRight className="w-5 h-5 text-black" />
                 </span>
