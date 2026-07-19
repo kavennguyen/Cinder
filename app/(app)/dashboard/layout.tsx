@@ -10,10 +10,9 @@ export const metadata: Metadata = {
 
 const navItems = [
   { label: "Overview", href: "/dashboard" },
-  { label: "AI Visibility", href: "/dashboard#prompts" },
-  { label: "SEO", href: "/dashboard#seo" },
-  { label: "Changes", href: "/dashboard#changes" },
-  { label: "Settings", href: "/dashboard#settings" },
+  { label: "Tracked Prompts", href: "/dashboard/prompts" },
+  { label: "Brands & Competitors", href: "/dashboard/brands" },
+  { label: "Changes", href: "/dashboard/changes" },
 ];
 
 export default function DashboardLayout({
