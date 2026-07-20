@@ -16,7 +16,7 @@ const paths = [
     body: "Our team optimizes your AI presence directly, so you show up in the answers your customers are already asking, without hiring for it.",
     href: "/services#small-business",
     linkLabel: "Explore the service",
-    bg: "bg-[#8A3220]",
+    bg: "bg-[#FF6E00]",
   },
 ];
 

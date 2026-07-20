@@ -32,7 +32,7 @@ export default function HeroSection() {
             </p>
             <Link
               href="/contact"
-              className="inline-block bg-black text-white font-medium px-8 py-3 rounded-full hover:bg-[#8A3220] transition-colors duration-300"
+              className="inline-block bg-black text-white font-medium px-8 py-3 rounded-full hover:bg-[#FF6E00] transition-colors duration-300"
             >
               Start Free
             </Link>

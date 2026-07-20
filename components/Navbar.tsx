@@ -51,7 +51,7 @@ export default function Navbar() {
           </Link>
           <Link
             href="/contact"
-            className="bg-[#8A3220] text-white rounded-full px-6 py-2 text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer"
+            className="bg-[#FF6E00] text-white rounded-full px-6 py-2 text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer"
           >
             Start Free
           </Link>

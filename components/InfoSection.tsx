@@ -19,7 +19,7 @@ export default function InfoSection() {
             </h2>
             <Link
               href="/services"
-              className="inline-flex items-center gap-3 bg-black text-white text-base font-medium pl-8 pr-2 py-2 rounded-full hover:bg-[#8A3220] transition-colors duration-200"
+              className="inline-flex items-center gap-3 bg-black text-white text-base font-medium pl-8 pr-2 py-2 rounded-full hover:bg-[#FF6E00] transition-colors duration-200"
             >
               How it works
               <span className="bg-white rounded-full p-2">
@@ -64,7 +64,7 @@ export default function InfoSection() {
           </div>
 
           {/* Card 2 */}
-          <div className="rounded-2xl bg-[#8A3220] p-7 min-h-80 flex flex-col justify-between">
+          <div className="rounded-2xl bg-[#FF6E00] p-7 min-h-80 flex flex-col justify-between">
             <h3 className="text-white text-2xl font-medium leading-snug">
               Always accurate,
               <br />
@@ -77,7 +77,7 @@ export default function InfoSection() {
           </div>
 
           {/* Card 3 */}
-          <div className="rounded-2xl bg-[#8A3220] p-7 min-h-80 flex flex-col justify-between">
+          <div className="rounded-2xl bg-[#FF6E00] p-7 min-h-80 flex flex-col justify-between">
             <h3 className="text-white text-2xl font-medium leading-snug">
               Fully
               <br />

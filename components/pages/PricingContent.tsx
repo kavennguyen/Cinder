@@ -98,7 +98,7 @@ function PricingSwitch({
         )}
         <span className="relative flex items-center gap-2">
           Annual Billing
-          <span className="rounded-full bg-[#8A3220] px-2 py-0.5 text-xs font-medium text-white">
+          <span className="rounded-full bg-[#FF6E00] px-2 py-0.5 text-xs font-medium text-white">
             Save 10%
           </span>
         </span>
@@ -163,11 +163,11 @@ export default function PricingContent() {
           80% { transform: scale(1.05) rotate(1.5deg); }
         }
         .pricing-card {
-          background-color: #8A3220;
+          background-color: #FF6E00;
           transition: background-color 0.2s ease;
         }
         .pricing-card:hover {
-          background-color: #B8471F;
+          background-color: #FF8A2E;
           animation: pricing-card-shake 1.2s ease-in-out infinite;
         }
       `}</style>

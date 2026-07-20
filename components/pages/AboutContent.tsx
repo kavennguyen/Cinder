@@ -66,10 +66,10 @@ export default function AboutContent() {
         <img
           src={MAIN_IMAGE}
           alt="Toronto skyline, representing Cinder's Canadian focus"
-          className="size-full max-h-[560px] rounded-2xl border-2 border-[#8A3220] object-cover lg:col-span-2"
+          className="size-full max-h-[560px] rounded-2xl object-cover lg:col-span-2"
         />
         <div className="flex flex-col gap-4 md:flex-row lg:flex-col">
-          <div className="flex flex-col justify-between gap-6 rounded-2xl border-2 border-[#8A3220] bg-black p-7 md:w-1/2 lg:w-auto">
+          <div className="flex flex-col justify-between gap-6 rounded-2xl border-2 border-[#FF6E00] bg-black p-7 md:w-1/2 lg:w-auto">
             <img
               src="/images/cinder-logo.png"
               alt="Cinder logo"
@@ -93,7 +93,7 @@ export default function AboutContent() {
           <img
             src={SECONDARY_IMAGE}
             alt="A team collaborating, representing the agencies Cinder works with"
-            className="grow basis-0 rounded-2xl border-2 border-[#8A3220] object-cover md:w-1/2 lg:min-h-0 lg:w-auto"
+            className="grow basis-0 rounded-2xl object-cover md:w-1/2 lg:min-h-0 lg:w-auto"
           />
         </div>
       </motion.div>
@@ -126,7 +126,7 @@ export default function AboutContent() {
         initial="hidden"
         animate="visible"
         variants={revealVariants}
-        className="relative overflow-hidden rounded-2xl border-2 border-[#8A3220] bg-black p-10 md:p-16 mb-16"
+        className="relative overflow-hidden rounded-2xl border-2 border-[#FF6E00] bg-black p-10 md:p-16 mb-16"
       >
         <div className="flex flex-col gap-4">
           <h2 className="text-white text-3xl md:text-4xl font-medium">
@@ -159,7 +159,7 @@ export default function AboutContent() {
         {values.map((value) => (
           <div
             key={value.title}
-            className="rounded-2xl bg-[#8A3220] p-7 min-h-56 flex flex-col justify-between"
+            className="rounded-2xl bg-[#FF6E00] p-7 min-h-56 flex flex-col justify-between"
           >
             <h3 className="text-white text-xl font-medium leading-snug">
               {value.title}

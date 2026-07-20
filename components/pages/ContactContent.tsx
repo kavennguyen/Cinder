@@ -56,7 +56,7 @@ export default function ContactContent() {
         >
           {submitted ? (
             <div className="rounded-2xl bg-black p-8 flex flex-col gap-3 max-w-md">
-              <span className="w-9 h-9 rounded-full bg-[#8A3220] flex items-center justify-center">
+              <span className="w-9 h-9 rounded-full bg-[#FF6E00] flex items-center justify-center">
                 <Check className="w-4 h-4 text-white" />
               </span>
               <h3 className="text-white text-xl font-medium">
@@ -115,12 +115,12 @@ export default function ContactContent() {
                 />
               </div>
               {error && (
-                <p className="text-[#8A3220] text-sm leading-relaxed">{error}</p>
+                <p className="text-[#FF6E00] text-sm leading-relaxed">{error}</p>
               )}
               <button
                 type="submit"
                 disabled={loading}
-                className="inline-flex items-center justify-center gap-3 bg-black text-white text-base font-medium pl-8 pr-2 py-2 rounded-full hover:bg-[#8A3220] transition-colors duration-200 w-fit mt-2 disabled:opacity-60"
+                className="inline-flex items-center justify-center gap-3 bg-black text-white text-base font-medium pl-8 pr-2 py-2 rounded-full hover:bg-[#FF6E00] transition-colors duration-200 w-fit mt-2 disabled:opacity-60"
               >
                 {loading ? "Sending…" : "Send Message"}
                 <span className="bg-white rounded-full p-2">

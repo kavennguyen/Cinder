@@ -10,7 +10,7 @@ import { revealVariants } from "@/lib/motion";
 const chartLines = [
   {
     name: "Cinder",
-    color: "#8A3220",
+    color: "#FF6E00",
     points: "0,190 103,175 206,168 309,150 412,120 514,90 617,55 720,30",
   },
   {
@@ -212,7 +212,7 @@ export default function ServicesContent() {
               key={feature}
               className="rounded-2xl bg-black p-6 flex items-start gap-3"
             >
-              <Check className="w-4 h-4 mt-1 shrink-0 text-[#8A3220]" />
+              <Check className="w-4 h-4 mt-1 shrink-0 text-[#FF6E00]" />
               <p className="text-white/80 text-sm leading-relaxed">
                 {feature}
               </p>
@@ -222,7 +222,7 @@ export default function ServicesContent() {
 
         <Link
           href="/contact"
-          className="inline-flex items-center gap-3 bg-black text-white text-base font-medium pl-8 pr-2 py-2 rounded-full hover:bg-[#8A3220] transition-colors duration-200"
+          className="inline-flex items-center gap-3 bg-black text-white text-base font-medium pl-8 pr-2 py-2 rounded-full hover:bg-[#FF6E00] transition-colors duration-200"
         >
           Start Free
           <span className="bg-white rounded-full p-2">
@@ -264,7 +264,7 @@ export default function ServicesContent() {
           {smallBusinessFeatures.map((feature) => (
             <div
               key={feature}
-              className="rounded-2xl bg-[#8A3220] p-6 flex items-start gap-3"
+              className="rounded-2xl bg-[#FF6E00] p-6 flex items-start gap-3"
             >
               <Check className="w-4 h-4 mt-1 shrink-0 text-white" />
               <p className="text-white/80 text-sm leading-relaxed">
@@ -276,7 +276,7 @@ export default function ServicesContent() {
 
         <Link
           href="/contact"
-          className="inline-flex items-center gap-3 bg-black text-white text-base font-medium pl-8 pr-2 py-2 rounded-full hover:bg-[#8A3220] transition-colors duration-200"
+          className="inline-flex items-center gap-3 bg-black text-white text-base font-medium pl-8 pr-2 py-2 rounded-full hover:bg-[#FF6E00] transition-colors duration-200"
         >
           Get a Free Audit
           <span className="bg-white rounded-full p-2">
