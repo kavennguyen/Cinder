@@ -10,6 +10,14 @@ interface GeminiPart {
   text?: string;
 }
 
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+// Retry transient failures (model overloaded / rate limited / server error)
+// with exponential backoff — essential for the unattended daily cron.
+const RETRYABLE_STATUS = new Set([429, 500, 503]);
+const MAX_ATTEMPTS = 4;
+const BACKOFF_MS = [0, 3000, 10000, 30000];
+
 async function callGemini(
   prompt: string,
   opts: { json?: boolean } = {},
@@ -21,34 +29,45 @@ async function callGemini(
     );
   }
 
-  const res = await fetch(`${BASE}/${GEMINI_MODEL}:generateContent`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-goog-api-key": apiKey,
-    },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: opts.json
-        ? {
-            responseMimeType: "application/json",
-            temperature: 0,
-            maxOutputTokens: 8192,
-          }
-        : { temperature: 0.4, maxOutputTokens: 4096 },
-    }),
-  });
+  let lastError = "";
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    if (BACKOFF_MS[attempt]) await sleep(BACKOFF_MS[attempt]);
 
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`Gemini API ${res.status}: ${body.slice(0, 300)}`);
+    const res = await fetch(`${BASE}/${GEMINI_MODEL}:generateContent`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": apiKey,
+      },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: opts.json
+          ? {
+              responseMimeType: "application/json",
+              temperature: 0,
+              maxOutputTokens: 8192,
+            }
+          : { temperature: 0.4, maxOutputTokens: 4096 },
+      }),
+    });
+
+    if (!res.ok) {
+      const body = await res.text();
+      lastError = `Gemini API ${res.status}: ${body.slice(0, 300)}`;
+      if (RETRYABLE_STATUS.has(res.status)) continue; // retry with backoff
+      throw new Error(lastError);
+    }
+
+    const data = await res.json();
+    const parts: GeminiPart[] = data?.candidates?.[0]?.content?.parts ?? [];
+    const text = parts.map((p) => p.text ?? "").join("");
+    if (!text) {
+      lastError = "Gemini returned an empty response.";
+      continue; // occasionally transient — retry
+    }
+    return text;
   }
-
-  const data = await res.json();
-  const parts: GeminiPart[] = data?.candidates?.[0]?.content?.parts ?? [];
-  const text = parts.map((p) => p.text ?? "").join("");
-  if (!text) throw new Error("Gemini returned an empty response.");
-  return text;
+  throw new Error(`${lastError} (after ${MAX_ATTEMPTS} attempts)`);
 }
 
 /** Ask Gemini the tracked prompt the way a real user would. */
