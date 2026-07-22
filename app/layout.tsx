@@ -19,7 +19,6 @@ export const metadata: Metadata = {
       "Track and grow your brand's visibility across every major AI engine. Dashboard for agencies, done-for-you service for small business.",
     url: SITE_URL,
   },
-  icons: { icon: "/images/cinder-logo.png" },
 };
 
 const organizationJsonLd = {
