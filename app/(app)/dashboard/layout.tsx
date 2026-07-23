@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import OrgSwitcher from "@/components/dashboard/OrgSwitcher";
 import SignOutButton from "@/components/SignOutButton";
+import { getUserOrg, listAllOrgs } from "@/lib/org";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -15,9 +17,12 @@ const navItems = [
   { label: "Changes", href: "/dashboard/changes" },
 ];
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const org = await getUserOrg();
+  const orgs = org?.isAdmin ? await listAllOrgs() : [];
+
   return (
     <div className="min-h-screen bg-white flex selection:bg-[#8A3220] selection:text-white">
       {/* Sidebar */}
@@ -31,6 +36,9 @@ export default function DashboardLayout({
             />
             <span className="text-white font-semibold text-lg">Cinder</span>
           </Link>
+          {org?.isAdmin && (
+            <OrgSwitcher orgs={orgs} activeOrgId={org.orgId} />
+          )}
           <nav className="flex flex-col gap-1">
             {navItems.map((item) => (
               <Link
