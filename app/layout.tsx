@@ -29,7 +29,7 @@ const organizationJsonLd = {
   logo: `${SITE_URL}/images/cinder-logo.png`,
   description:
     "AI visibility (AEO) platform for Canadian brands and agencies. Tracks brand mentions and citations across ChatGPT, Perplexity, Gemini, and Copilot, and implements the website changes that improve them.",
-  email: "hello@cinder.ca",
+  email: "Cinder@Cindersource.com",
   address: {
     "@type": "PostalAddress",
     addressLocality: "Toronto",
