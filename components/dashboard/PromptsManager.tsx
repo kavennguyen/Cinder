@@ -7,7 +7,8 @@ import { Plus, Trash2 } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/client";
 
-export interface PromptLastResult {
+export interface PromptEngineResult {
+  platform: string;
   ranAt: string;
   status: string;
   mentioned: boolean | null;
@@ -20,44 +21,68 @@ export interface TrackedPrompt {
   platforms: string[];
   is_active: boolean;
   created_at: string;
-  last?: PromptLastResult | null;
+  results?: PromptEngineResult[];
 }
 
-function ResultBadge({ last }: { last: PromptLastResult | null | undefined }) {
-  if (!last) {
+const ALL_PLATFORMS = [
+  { id: "chatgpt", label: "ChatGPT", soon: false },
+  { id: "perplexity", label: "Perplexity", soon: false },
+  { id: "gemini", label: "Gemini", soon: false },
+  { id: "ai_overviews", label: "AI Overviews", soon: true },
+];
+
+const platformLabel = (id: string) =>
+  ALL_PLATFORMS.find((p) => p.id === id)?.label ?? id;
+
+/** One compact badge per engine: latest result for this prompt. */
+function ResultBadges({
+  results,
+}: {
+  results: PromptEngineResult[] | undefined;
+}) {
+  if (!results || results.length === 0) {
     return (
       <span className="text-xs font-medium px-3 py-1 rounded-full border border-black/10 text-black/40">
         Not run yet
       </span>
     );
   }
-  if (last.status === "error") {
-    return (
-      <span className="text-xs font-medium px-3 py-1 rounded-full border border-[#8A3220]/40 text-[#8A3220]">
-        Last run failed
-      </span>
-    );
-  }
-  if (last.mentioned) {
-    return (
-      <span className="text-xs font-medium px-3 py-1 rounded-full bg-black text-white">
-        Mentioned{last.position ? ` · #${last.position}` : ""}
-      </span>
-    );
-  }
   return (
-    <span className="text-xs font-medium px-3 py-1 rounded-full border border-black/15 text-black/50">
-      Not mentioned
+    <span className="inline-flex items-center gap-1.5 flex-wrap">
+      {results.map((r) => {
+        if (r.status === "error") {
+          return (
+            <span
+              key={r.platform}
+              className="text-xs font-medium px-2.5 py-1 rounded-full border border-[#8A3220]/40 text-[#8A3220]"
+            >
+              {platformLabel(r.platform)} · failed
+            </span>
+          );
+        }
+        if (r.mentioned) {
+          return (
+            <span
+              key={r.platform}
+              className="text-xs font-medium px-2.5 py-1 rounded-full bg-black text-white"
+            >
+              {platformLabel(r.platform)}
+              {r.position ? ` #${r.position}` : " ✓"}
+            </span>
+          );
+        }
+        return (
+          <span
+            key={r.platform}
+            className="text-xs font-medium px-2.5 py-1 rounded-full border border-black/15 text-black/50"
+          >
+            {platformLabel(r.platform)} ✗
+          </span>
+        );
+      })}
     </span>
   );
 }
-
-const ALL_PLATFORMS = [
-  { id: "chatgpt", label: "ChatGPT" },
-  { id: "perplexity", label: "Perplexity" },
-  { id: "gemini", label: "Gemini" },
-  { id: "ai_overviews", label: "AI Overviews" },
-];
 
 interface PromptsManagerProps {
   orgId: string;
@@ -163,14 +188,19 @@ export default function PromptsManager({
             <button
               key={p.id}
               type="button"
+              disabled={p.soon}
               onClick={() => togglePlatform(p.id)}
+              title={p.soon ? "Coming soon" : undefined}
               className={`text-xs font-medium px-3 py-1.5 rounded-full border transition-colors duration-200 ${
-                platforms.includes(p.id)
-                  ? "bg-black text-white border-black"
-                  : "bg-white text-black/50 border-black/15 hover:border-black/40"
+                p.soon
+                  ? "bg-white text-black/30 border-black/10 cursor-not-allowed"
+                  : platforms.includes(p.id)
+                    ? "bg-black text-white border-black"
+                    : "bg-white text-black/50 border-black/15 hover:border-black/40"
               }`}
             >
               {p.label}
+              {p.soon ? " · soon" : ""}
             </button>
           ))}
         </div>
@@ -214,14 +244,9 @@ export default function PromptsManager({
                 </Link>
                 <div className="flex items-center gap-3 flex-wrap">
                   <p className="text-black/50 text-xs">
-                    {prompt.platforms
-                      .map(
-                        (p) =>
-                          ALL_PLATFORMS.find((ap) => ap.id === p)?.label ?? p,
-                      )
-                      .join(" · ")}
+                    {prompt.platforms.map(platformLabel).join(" · ")}
                   </p>
-                  <ResultBadge last={prompt.last} />
+                  <ResultBadges results={prompt.results} />
                 </div>
               </div>
               <button

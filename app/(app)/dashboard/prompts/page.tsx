@@ -24,7 +24,7 @@ export default async function PromptsPage() {
 
   const withResults: TrackedPrompt[] = (prompts ?? []).map((p) => ({
     ...(p as TrackedPrompt),
-    last: snapshot.byPrompt[p.id] ?? null,
+    results: snapshot.byPrompt[p.id] ?? [],
   }));
 
   return (
@@ -38,8 +38,8 @@ export default async function PromptsPage() {
       </h1>
       <p className="text-black/60 text-base leading-relaxed max-w-xl mb-6">
         These are the questions Cinder asks each AI engine to measure whether{" "}
-        {org.orgName} shows up in the answer. Gemini runs are live; more
-        engines are coming.
+        {org.orgName} shows up in the answer. ChatGPT, Perplexity, and Gemini
+        run live; AI Overviews is coming soon.
       </p>
 
       <div className="mb-10">

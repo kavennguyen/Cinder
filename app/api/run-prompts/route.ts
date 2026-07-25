@@ -28,7 +28,9 @@ export async function POST() {
     return NextResponse.json({
       ...summary,
       message:
-        "No active prompts with Gemini selected. Add prompts (with the Gemini platform) first.",
+        summary.skippedEngines.length > 0
+          ? `No runs happened — no API key configured for ${summary.skippedEngines.join(", ")}.`
+          : "No active prompts yet. Add the questions your customers ask AI, then run again.",
     });
   }
   return NextResponse.json(summary);

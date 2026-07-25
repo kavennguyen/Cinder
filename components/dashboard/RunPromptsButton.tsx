@@ -20,8 +20,12 @@ export default function RunPromptsButton() {
       } else if (data.message) {
         setResult(data.message);
       } else {
+        const skipped =
+          Array.isArray(data.skippedEngines) && data.skippedEngines.length > 0
+            ? ` No API key for ${data.skippedEngines.join(", ")} — those were skipped.`
+            : "";
         setResult(
-          `Ran ${data.ran} prompt${data.ran === 1 ? "" : "s"} — ${data.mentionsFound} brand mention${data.mentionsFound === 1 ? "" : "s"} found${data.errors ? ` (${data.errors} errored)` : ""}.`,
+          `Ran ${data.ran} engine run${data.ran === 1 ? "" : "s"} — ${data.mentionsFound} brand mention${data.mentionsFound === 1 ? "" : "s"} found${data.errors ? ` (${data.errors} errored)` : ""}.${skipped}`,
         );
         router.refresh();
       }

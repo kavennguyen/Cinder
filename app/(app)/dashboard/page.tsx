@@ -12,6 +12,13 @@ import {
 import VisibilityChart from "@/components/dashboard/VisibilityChart";
 import ShareOfVoiceChart from "@/components/dashboard/ShareOfVoiceChart";
 
+const PLATFORM_LABELS: Record<string, string> = {
+  chatgpt: "ChatGPT",
+  perplexity: "Perplexity",
+  gemini: "Gemini",
+  ai_overviews: "AI Overviews",
+};
+
 export default async function DashboardPage() {
   if (!isSupabaseConfiguredServer()) {
     return (
@@ -111,6 +118,31 @@ export default async function DashboardPage() {
         ))}
       </div>
 
+      {snapshot.byPlatform.length > 0 && (
+        <div className="rounded-2xl border border-black/10 p-6 mb-10">
+          <p className="text-black/60 text-sm mb-4">Visibility by engine</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {snapshot.byPlatform.map((p) => (
+              <div key={p.platform}>
+                <p className="text-black/50 text-xs font-medium uppercase tracking-wide mb-1">
+                  {PLATFORM_LABELS[p.platform] ?? p.platform}
+                </p>
+                <p
+                  className="text-black text-3xl font-medium"
+                  style={{ letterSpacing: "-0.02em" }}
+                >
+                  {p.scorePct !== null ? `${p.scorePct}%` : "—"}
+                </p>
+                <p className="text-black/40 text-xs mt-1">
+                  {p.mentioned} of {p.total} prompt
+                  {p.total === 1 ? "" : "s"} mention you
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-10">
         <VisibilityChart points={history} />
         <ShareOfVoiceChart rows={shareOfVoice} />
@@ -123,8 +155,9 @@ export default async function DashboardPage() {
         </p>
         <p className="text-white/60 text-sm leading-relaxed max-w-lg">
           Go to Tracked Prompts and hit &ldquo;Run prompts now&rdquo; — Cinder
-          will ask Gemini each question, detect whether your brand (and your
-          competitors) appear, and update the score above.
+          will ask ChatGPT, Perplexity, and Gemini each question, detect
+          whether your brand (and your competitors) appear, and update the
+          scores above.
         </p>
       </div>
     </div>

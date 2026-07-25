@@ -1,17 +1,36 @@
 import { createClient } from "@/lib/supabase/server";
 
-export interface PromptResult {
+/** Display order for engines throughout the dashboard. */
+const PLATFORM_ORDER = ["chatgpt", "perplexity", "gemini", "ai_overviews"];
+
+const platformRank = (p: string) => {
+  const i = PLATFORM_ORDER.indexOf(p);
+  return i === -1 ? PLATFORM_ORDER.length : i;
+};
+
+export interface PromptEngineResult {
+  platform: string;
   ranAt: string;
   status: string;
   mentioned: boolean | null;
   position: number | null;
 }
 
-export interface VisibilitySnapshot {
-  /** % of prompts (latest successful run each) where the org's own brand was mentioned. */
+export interface PlatformScore {
+  platform: string;
+  /** % of this platform's latest-per-prompt successful runs mentioning the brand. */
   scorePct: number | null;
-  /** promptId → latest run result */
-  byPrompt: Record<string, PromptResult>;
+  mentioned: number;
+  total: number;
+}
+
+export interface VisibilitySnapshot {
+  /** % across the latest successful run of every (prompt × platform) pair. */
+  scorePct: number | null;
+  /** promptId → latest result per platform (ordered chatgpt, perplexity, …). */
+  byPrompt: Record<string, PromptEngineResult[]>;
+  /** Per-engine score across the org's prompts. */
+  byPlatform: PlatformScore[];
 }
 
 export async function getVisibilitySnapshot(
@@ -29,18 +48,32 @@ export async function getVisibilitySnapshot(
 
   const { data: runs } = await supabase
     .from("prompt_runs")
-    .select("id, prompt_id, ran_at, status")
+    .select("id, prompt_id, platform, ran_at, status")
     .eq("org_id", orgId)
     .order("ran_at", { ascending: false })
-    .limit(400);
+    .limit(600);
 
+  // Latest run per (prompt × platform).
   const latest = new Map<
     string,
-    { id: string; ranAt: string; status: string }
+    {
+      id: string;
+      promptId: string;
+      platform: string;
+      ranAt: string;
+      status: string;
+    }
   >();
   for (const r of runs ?? []) {
-    if (!latest.has(r.prompt_id)) {
-      latest.set(r.prompt_id, { id: r.id, ranAt: r.ran_at, status: r.status });
+    const key = `${r.prompt_id}:${r.platform}`;
+    if (!latest.has(key)) {
+      latest.set(key, {
+        id: r.id,
+        promptId: r.prompt_id,
+        platform: r.platform,
+        ranAt: r.ran_at,
+        status: r.status,
+      });
     }
   }
 
@@ -50,39 +83,67 @@ export async function getVisibilitySnapshot(
   >();
   if (brand && latest.size > 0) {
     const runIds = [...latest.values()].map((l) => l.id);
-    const { data: mentions } = await supabase
-      .from("mentions")
-      .select("run_id, mentioned, position")
-      .eq("brand_id", brand.id)
-      .in("run_id", runIds);
-    for (const m of mentions ?? []) {
-      mentionsByRun.set(m.run_id, {
-        mentioned: m.mentioned,
-        position: m.position,
-      });
+    for (let i = 0; i < runIds.length; i += 200) {
+      const chunk = runIds.slice(i, i + 200);
+      const { data: mentions } = await supabase
+        .from("mentions")
+        .select("run_id, mentioned, position")
+        .eq("brand_id", brand.id)
+        .in("run_id", chunk);
+      for (const m of mentions ?? []) {
+        mentionsByRun.set(m.run_id, {
+          mentioned: m.mentioned,
+          position: m.position,
+        });
+      }
     }
   }
 
-  const byPrompt: Record<string, PromptResult> = {};
+  const byPrompt: Record<string, PromptEngineResult[]> = {};
+  const perPlatform = new Map<string, { mentioned: number; total: number }>();
   let okCount = 0;
   let mentionedCount = 0;
-  for (const [promptId, l] of latest) {
+
+  for (const l of latest.values()) {
     const m = mentionsByRun.get(l.id);
-    byPrompt[promptId] = {
+    const entry: PromptEngineResult = {
+      platform: l.platform,
       ranAt: l.ranAt,
       status: l.status,
       mentioned: l.status === "ok" ? (m?.mentioned ?? false) : null,
       position: m?.position ?? null,
     };
+    (byPrompt[l.promptId] ??= []).push(entry);
+
     if (l.status === "ok") {
       okCount += 1;
-      if (m?.mentioned) mentionedCount += 1;
+      const p = perPlatform.get(l.platform) ?? { mentioned: 0, total: 0 };
+      p.total += 1;
+      if (m?.mentioned) {
+        mentionedCount += 1;
+        p.mentioned += 1;
+      }
+      perPlatform.set(l.platform, p);
     }
   }
+
+  for (const list of Object.values(byPrompt)) {
+    list.sort((a, b) => platformRank(a.platform) - platformRank(b.platform));
+  }
+
+  const byPlatform: PlatformScore[] = [...perPlatform.entries()]
+    .map(([platform, { mentioned, total }]) => ({
+      platform,
+      scorePct: total > 0 ? Math.round((mentioned / total) * 100) : null,
+      mentioned,
+      total,
+    }))
+    .sort((a, b) => platformRank(a.platform) - platformRank(b.platform));
 
   return {
     scorePct: okCount > 0 ? Math.round((mentionedCount / okCount) * 100) : null,
     byPrompt,
+    byPlatform,
   };
 }
 
