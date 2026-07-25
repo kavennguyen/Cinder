@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2 } from "lucide-react";
@@ -97,6 +97,13 @@ export default function PromptsManager({
 }: PromptsManagerProps) {
   const router = useRouter();
   const [prompts, setPrompts] = useState<TrackedPrompt[]>(initialPrompts);
+
+  // router.refresh() (e.g. after "Run prompts now") re-renders the server
+  // page with fresh results — re-sync local state so badges update without
+  // a full reload.
+  useEffect(() => {
+    setPrompts(initialPrompts);
+  }, [initialPrompts]);
   const [text, setText] = useState("");
   const [platforms, setPlatforms] = useState<string[]>([
     "chatgpt",
