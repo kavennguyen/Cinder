@@ -2,33 +2,23 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
 import { ArrowRight } from "lucide-react";
 
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
-interface AuthFormProps {
-  mode: "login" | "signup";
-}
-
-export default function AuthForm({ mode }: AuthFormProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+export default function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-
-  const configured = isSupabaseConfigured();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setMessage(null);
 
-    if (!configured) {
+    if (!isSupabaseConfigured()) {
       setError(
         "Supabase isn't connected yet. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to .env.local.",
       );
@@ -38,33 +28,20 @@ export default function AuthForm({ mode }: AuthFormProps) {
     setLoading(true);
     const supabase = createClient();
 
-    if (mode === "signup") {
-      const { error } = await supabase.auth.signUp({ email, password });
-      if (error) {
-        setError(error.message);
-      } else {
-        setMessage("Check your email to confirm your account, then sign in.");
-      }
+    // NOTE: /update-password must be listed in Supabase → Authentication →
+    // URL Configuration → Redirect URLs, or the email link won't land here.
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/update-password`,
+    });
+
+    if (error) {
+      // Real failures only (e.g. rate limit) — Supabase does not error for
+      // unknown emails, so this never leaks account existence.
+      setError(error.message);
     } else {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) {
-        setError(error.message);
-      } else {
-        // Only follow same-site paths — never absolute or protocol-relative
-        // URLs (open-redirect protection).
-        const next = searchParams.get("next");
-        const safeNext =
-          next && next.startsWith("/") && !next.startsWith("//")
-            ? next
-            : "/dashboard";
-        router.push(safeNext);
-        router.refresh();
-        setLoading(false);
-        return;
-      }
+      setMessage(
+        "If that email has an account, a reset link is on its way. Check your inbox.",
+      );
     }
     setLoading(false);
   };
@@ -90,47 +67,27 @@ export default function AuthForm({ mode }: AuthFormProps) {
           className="text-black text-3xl md:text-4xl font-medium leading-tight mb-2"
           style={{ letterSpacing: "-0.03em" }}
         >
-          {mode === "login" ? "Welcome back." : "Create your account."}
+          Reset your password.
         </h1>
         <p className="text-black/60 text-base mb-8">
-          {mode === "login"
-            ? "Sign in to your Cinder dashboard."
-            : "Start tracking your AI visibility."}
+          Enter your email and we&apos;ll send you a reset link.
         </p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
             <label
-              htmlFor="auth-email"
+              htmlFor="reset-email"
               className="block text-black/70 text-sm font-medium mb-2"
             >
               Email
             </label>
             <input
-              id="auth-email"
+              id="reset-email"
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="jane@company.com"
-              className="w-full rounded-full border border-black/15 bg-white/40 px-5 py-3 text-black placeholder-black/40 outline-none focus:border-black/40 transition-colors duration-300"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="auth-password"
-              className="block text-black/70 text-sm font-medium mb-2"
-            >
-              Password
-            </label>
-            <input
-              id="auth-password"
-              type="password"
-              required
-              minLength={8}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
               className="w-full rounded-full border border-black/15 bg-white/40 px-5 py-3 text-black placeholder-black/40 outline-none focus:border-black/40 transition-colors duration-300"
             />
           </div>
@@ -147,11 +104,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
             disabled={loading}
             className="inline-flex items-center justify-center gap-3 bg-black text-white text-base font-medium pl-8 pr-2 py-2 rounded-full hover:bg-[#8A3220] transition-colors duration-200 w-fit mt-2 disabled:opacity-60"
           >
-            {loading
-              ? "One moment…"
-              : mode === "login"
-                ? "Sign In"
-                : "Create Account"}
+            {loading ? "One moment…" : "Send Reset Link"}
             <span className="bg-white rounded-full p-2">
               <ArrowRight className="w-5 h-5 text-black" />
             </span>
@@ -159,25 +112,13 @@ export default function AuthForm({ mode }: AuthFormProps) {
         </form>
 
         <p className="text-black/60 text-sm mt-8">
-          {mode === "login" ? (
-            <>
-              New to Cinder?{" "}
-              <Link href="/signup" className="text-black underline underline-offset-4 hover:text-[#8A3220] transition-colors">
-                Create an account
-              </Link>
-              {" · "}
-              <Link href="/forgot-password" className="text-black underline underline-offset-4 hover:text-[#8A3220] transition-colors">
-                Forgot password?
-              </Link>
-            </>
-          ) : (
-            <>
-              Already have an account?{" "}
-              <Link href="/login" className="text-black underline underline-offset-4 hover:text-[#8A3220] transition-colors">
-                Sign in
-              </Link>
-            </>
-          )}
+          Remembered it?{" "}
+          <Link
+            href="/login"
+            className="text-black underline underline-offset-4 hover:text-[#8A3220] transition-colors"
+          >
+            Sign in
+          </Link>
         </p>
       </motion.div>
     </div>
