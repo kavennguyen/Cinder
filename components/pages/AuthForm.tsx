@@ -53,7 +53,14 @@ export default function AuthForm({ mode }: AuthFormProps) {
       if (error) {
         setError(error.message);
       } else {
-        router.push(searchParams.get("next") ?? "/dashboard");
+        // Only follow same-site paths — never absolute or protocol-relative
+        // URLs (open-redirect protection).
+        const next = searchParams.get("next");
+        const safeNext =
+          next && next.startsWith("/") && !next.startsWith("//")
+            ? next
+            : "/dashboard";
+        router.push(safeNext);
         router.refresh();
         setLoading(false);
         return;

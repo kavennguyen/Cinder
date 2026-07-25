@@ -6,6 +6,9 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 export const maxDuration = 300; // allow long runs (Vercel: needs Pro for >60s)
 
+/** Refuse manual runs if the org already ran within this window. */
+const COOLDOWN_MINUTES = 10;
+
 export async function POST() {
   // Manual trigger: must be a signed-in member of an org.
   const org = await getUserOrg();
@@ -20,6 +23,28 @@ export async function POST() {
     return NextResponse.json(
       { error: e instanceof Error ? e.message : "Admin client error" },
       { status: 500 },
+    );
+  }
+
+  // Cooldown: stops button-mashing from burning Gemini quota. (The daily
+  // cron uses its own route and is unaffected.)
+  const { data: lastRun } = await admin
+    .from("prompt_runs")
+    .select("ran_at")
+    .eq("org_id", org.orgId)
+    .order("ran_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (
+    lastRun &&
+    Date.now() - new Date(lastRun.ran_at).getTime() < COOLDOWN_MINUTES * 60_000
+  ) {
+    return NextResponse.json(
+      {
+        error: `Prompts already ran in the last ${COOLDOWN_MINUTES} minutes. Give it a moment — daily runs also happen automatically.`,
+      },
+      { status: 429 },
     );
   }
 
