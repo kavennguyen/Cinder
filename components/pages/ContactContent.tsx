@@ -148,9 +148,6 @@ export default function ContactContent() {
             </span>
             Toronto, Canada
           </p>
-          <p className="text-black/50 text-sm">
-            Placeholder contact details. Replace with real information.
-          </p>
         </motion.div>
       </div>
     </PageShell>
