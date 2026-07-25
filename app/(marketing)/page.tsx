@@ -6,6 +6,7 @@ import TwoPathsSection from "@/components/TwoPathsSection";
 import InfoSection from "@/components/InfoSection";
 import BackedBySection from "@/components/BackedBySection";
 import UseCasesSection from "@/components/UseCasesSection";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Cinder — The AI Visibility Platform for Canada",
@@ -24,6 +25,7 @@ export default function Home() {
       <TwoPathsSection />
       <InfoSection />
       <UseCasesSection />
+      <Footer />
     </div>
   );
 }
