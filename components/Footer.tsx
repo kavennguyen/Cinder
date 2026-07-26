@@ -3,14 +3,6 @@
 import Link from "next/link";
 import { ArrowRight, X } from "lucide-react";
 
-function LinkedinIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="currentColor">
-      <path d="M20.45 20.45h-3.56v-5.58c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.68H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13ZM7.12 20.45H3.56V9h3.56v11.45Z" />
-    </svg>
-  );
-}
-
 const linkSections = [
   {
     title: "Product",
@@ -110,11 +102,13 @@ export default function Footer() {
 
           <div className="flex items-center gap-6">
             <div className="flex gap-4 border-r border-white/10 pr-6">
-              <a href="#" className="text-white/40 transition-colors hover:text-white">
+              <a
+                href="https://x.com/CinderSource"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white/40 transition-colors hover:text-white"
+              >
                 <X size={18} />
-              </a>
-              <a href="#" className="text-white/40 transition-colors hover:text-white">
-                <LinkedinIcon />
               </a>
             </div>
 
