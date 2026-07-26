@@ -5,7 +5,15 @@ const paths = [
   {
     audience: "For Agencies",
     name: "The Cinder Dashboard",
-    body: "Track every client's AI visibility in one place. Benchmark against competitors, see which sources get cited, and report it all under your own brand.",
+    body: (
+      <>
+        Track every client&apos;s{" "}
+        <strong className="font-semibold text-lg text-white">AI visibility</strong> in
+        one place. Benchmark against competitors, see which sources get{" "}
+        <strong className="font-semibold text-lg text-white">cited</strong>, and
+        report it all under your own brand.
+      </>
+    ),
     href: "/services#agencies",
     linkLabel: "Explore the dashboard",
     bg: "bg-black",
@@ -13,7 +21,18 @@ const paths = [
   {
     audience: "For Small Business",
     name: "The Cinder Service",
-    body: "Our team optimizes your AI presence directly, so you show up in the answers your customers are already asking, without hiring for it.",
+    body: (
+      <>
+        Our team optimizes your{" "}
+        <strong className="font-semibold text-lg text-white">AI presence</strong>{" "}
+        directly, so you show up in the answers your customers are already
+        asking,{" "}
+        <span className="underline decoration-2 underline-offset-4 decoration-white/70">
+          without hiring for it
+        </span>
+        .
+      </>
+    ),
     href: "/services#small-business",
     linkLabel: "Explore the service",
     bg: "bg-[#FF6E00]",
@@ -29,7 +48,8 @@ export default function TwoPathsSection() {
           className="text-black text-4xl md:text-5xl font-medium leading-tight mb-16 max-w-2xl"
           style={{ letterSpacing: "-0.03em" }}
         >
-          However you want to win AI search, we have a way in.
+          However you want to win{" "}
+          <strong className="font-bold text-5xl md:text-6xl">AI search</strong>, we have a way in.
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

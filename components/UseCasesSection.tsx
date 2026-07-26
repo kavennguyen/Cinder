@@ -19,9 +19,14 @@ export default function UseCasesSection() {
             Use cases
           </h2>
           <p className="text-black/60 text-base leading-relaxed max-w-sm">
-            Cinder powers AI visibility for brands, agencies, and
-            enterprise marketing teams across Canada who need to be found,
-            and trusted, inside AI generated answers.
+            Cinder powers{" "}
+            <strong className="font-semibold text-lg text-black">AI visibility</strong>{" "}
+            for brands, agencies, and enterprise marketing teams across
+            Canada who need to be{" "}
+            <span className="underline decoration-2 underline-offset-4 decoration-black">
+              found, and trusted
+            </span>
+            , inside AI generated answers.
           </p>
         </div>
 
@@ -46,8 +51,12 @@ export default function UseCasesSection() {
               Ecommerce
             </h3>
             <p className="text-black/70 text-base max-w-md mb-8">
-              Win the AI shopping moment. When ChatGPT or Gemini recommends
-              products, make sure it&apos;s your brand customers hear about first.
+              Win the{" "}
+              <strong className="font-semibold text-lg text-black">
+                AI shopping moment
+              </strong>
+              . When ChatGPT or Gemini recommends products, make sure
+              it&apos;s your brand customers hear about first.
             </p>
             <a
               href="#"

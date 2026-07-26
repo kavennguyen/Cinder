@@ -29,10 +29,20 @@ export default function InfoSection() {
           </div>
           <div>
             <p className="text-black/70 text-2xl md:text-3xl leading-relaxed">
-              Cinder is the AI visibility platform built for Canada: a
-              self service dashboard for agencies and small businesses
-              dedicated to optimizing your online presence. One engine,
-              two ways to get named.
+              Cinder is the{" "}
+              <strong className="font-semibold text-3xl md:text-4xl text-black">
+                AI visibility platform
+              </strong>{" "}
+              built for Canada: a{" "}
+              <strong className="font-semibold text-3xl md:text-4xl text-black">
+                self service dashboard
+              </strong>{" "}
+              for agencies and small businesses dedicated to optimizing your
+              online presence. One engine,{" "}
+              <span className="underline decoration-2 underline-offset-4 decoration-black">
+                two ways to get named
+              </span>
+              .
             </p>
           </div>
         </div>
@@ -56,9 +66,11 @@ export default function InfoSection() {
                 Visibility that compounds
               </h3>
               <p className="text-black/70 text-base max-w-xs">
-                Every citation builds trust. The more AI engines reference
-                your content, the more often you become the default answer in
-                your category.
+                Every <strong className="font-semibold text-lg text-black">citation</strong>{" "}
+                builds trust. The more AI engines reference your content, the
+                more often you become the{" "}
+                <strong className="font-semibold text-lg text-black">default answer</strong>{" "}
+                in your category.
               </p>
             </div>
           </div>
@@ -71,8 +83,10 @@ export default function InfoSection() {
               always cited.
             </h3>
             <p className="text-white/60 text-base">
-              Stay the reference AI models trust, with no stale data and no
-              outdated claims holding your brand back.
+              Stay the reference{" "}
+              <strong className="font-semibold text-lg text-white">AI models trust</strong>,
+              with no stale data and no outdated claims holding your brand
+              back.
             </p>
           </div>
 
@@ -84,8 +98,15 @@ export default function InfoSection() {
               monitored.
             </h3>
             <p className="text-white/60 text-base">
-              Skip manually checking every AI platform. Cinder tracks
-              your citations and rankings for you, continuously.
+              Skip manually checking every AI platform. Cinder tracks your{" "}
+              <strong className="font-semibold text-lg text-white">
+                citations and rankings
+              </strong>{" "}
+              for you,{" "}
+              <span className="underline decoration-2 underline-offset-4 decoration-white/60">
+                continuously
+              </span>
+              .
             </p>
           </div>
         </div>

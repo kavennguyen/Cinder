@@ -47,7 +47,19 @@ export default function CaseStudiesContent() {
       <PageHeader
         eyebrow="Results"
         title="Case Studies"
-        description="A look at how Cinder has helped brands earn visibility inside AI generated answers. Placeholder results shown below."
+        description={
+          <>
+            A look at how Cinder has helped brands earn{" "}
+            <strong className="font-semibold text-xl md:text-2xl text-black">
+              visibility
+            </strong>{" "}
+            inside{" "}
+            <span className="underline decoration-2 underline-offset-4 decoration-black">
+              AI generated answers
+            </span>
+            . Placeholder results shown below.
+          </>
+        }
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

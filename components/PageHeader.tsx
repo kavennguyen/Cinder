@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { motion } from "motion/react";
 
 import { revealVariants } from "@/lib/motion";
@@ -7,7 +8,7 @@ import { revealVariants } from "@/lib/motion";
 interface PageHeaderProps {
   eyebrow: string;
   title: string;
-  description: string;
+  description: ReactNode;
 }
 
 export default function PageHeader({ eyebrow, title, description }: PageHeaderProps) {

@@ -7,7 +7,11 @@ export default function BackedBySection() {
         <div className="text-black/70 text-base leading-relaxed">
           Tracking your visibility
           <br />
-          across every major AI engine.
+          across{" "}
+          <strong className="font-semibold text-lg text-black">
+            every major AI engine
+          </strong>
+          .
         </div>
 
         <div className="md:col-span-3 overflow-hidden">

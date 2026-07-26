@@ -51,8 +51,15 @@ export default function AboutContent() {
           About Cinder
         </h1>
         <p className="text-black/70 text-lg md:text-xl leading-relaxed">
-          The front door of the internet is changing. Cinder exists to make
-          sure your name is the one it gives.
+          The{" "}
+          <strong className="font-semibold text-xl md:text-2xl text-black">
+            front door of the internet
+          </strong>{" "}
+          is changing. Cinder exists to make sure your name is{" "}
+          <span className="underline decoration-2 underline-offset-4 decoration-black">
+            the one it gives
+          </span>
+          .
         </p>
       </motion.div>
 
@@ -106,7 +113,10 @@ export default function AboutContent() {
         className="py-16 border-y border-black/10 mb-16"
       >
         <p className="text-center text-black/60 text-sm mb-8">
-          Tracking your visibility across every major AI engine
+          Tracking your visibility across{" "}
+          <strong className="font-semibold text-base text-black">
+            every major AI engine
+          </strong>
         </p>
         <div className="flex flex-wrap justify-center gap-10">
           {aiPlatforms.map((platform) => (
@@ -133,8 +143,11 @@ export default function AboutContent() {
             Built for what&apos;s next
           </h2>
           <p className="max-w-lg text-white/60">
-            Cinder is early. These are the facts that are true today, not
-            projections.
+            Cinder is early. These are the facts that are{" "}
+            <strong className="font-semibold text-lg text-white">
+              true today
+            </strong>
+            , not projections.
           </p>
         </div>
         <div className="mt-10 flex flex-wrap justify-between gap-10">

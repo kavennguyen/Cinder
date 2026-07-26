@@ -84,9 +84,16 @@ export default function ServicesContent() {
           </h1>
         </div>
         <p className="text-black/70 text-lg md:text-xl leading-relaxed md:pt-3">
-          Cinder is an AI visibility platform for the age of answer engines.
-          However you want to win AI search, we have a way in: a dashboard
-          for agencies, and a done for you service for small businesses.
+          Cinder is an{" "}
+          <strong className="font-semibold text-xl md:text-2xl text-black">
+            AI visibility platform
+          </strong>{" "}
+          for the age of answer engines. However you want to win{" "}
+          <span className="underline decoration-2 underline-offset-4 decoration-black">
+            AI search
+          </span>
+          , we have a way in: a dashboard for agencies, and a done for you
+          service for small businesses.
         </p>
       </motion.div>
 
@@ -198,11 +205,17 @@ export default function ServicesContent() {
             </h2>
           </div>
           <p className="text-black/70 text-lg leading-relaxed md:pt-3">
-            The Cinder dashboard is built for agencies who want to offer AI
-            visibility as a service without building the machinery themselves.
-            What used to take scattered tools, manual prompting, and guesswork
-            becomes one clean, repeatable workflow, so your team spends time on
-            strategy instead of assembly.
+            The Cinder dashboard is built for agencies who want to offer{" "}
+            <strong className="font-semibold text-xl text-black">
+              AI visibility
+            </strong>{" "}
+            as a service without building the machinery themselves. What used
+            to take scattered tools, manual prompting, and guesswork becomes
+            one{" "}
+            <span className="underline decoration-2 underline-offset-4 decoration-black">
+              clean, repeatable workflow
+            </span>
+            , so your team spends time on strategy instead of assembly.
           </p>
         </div>
 
@@ -252,11 +265,18 @@ export default function ServicesContent() {
           </div>
           <p className="text-black/70 text-lg leading-relaxed md:pt-3">
             Most small businesses don&apos;t have the time or the specialist
-            knowledge to optimize for AI search, and they shouldn&apos;t have to.
-            Our team does it for them, using the same platform that powers
-            our dashboard, so you show up in the AI answers your customers
-            are already asking, from the questions they type into ChatGPT to
-            the recommendations they trust.
+            knowledge to optimize for{" "}
+            <strong className="font-semibold text-xl text-black">
+              AI search
+            </strong>
+            , and they shouldn&apos;t have to. Our team does it for them,
+            using the same platform that powers our dashboard, so you show up
+            in the AI answers your customers are already asking, from the
+            questions they type into ChatGPT to{" "}
+            <span className="underline decoration-2 underline-offset-4 decoration-black">
+              the recommendations they trust
+            </span>
+            .
           </p>
         </div>
 

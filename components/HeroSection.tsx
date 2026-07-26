@@ -26,9 +26,17 @@ export default function HeroSection() {
               Be The Answer AI Gives.
             </h1>
             <p className="text-black/60 text-lg leading-relaxed max-w-xl mx-auto md:mx-0 mb-8">
-              Cinder helps Canadian brands, and the agencies behind them, earn
-              visibility inside ChatGPT, Perplexity, Gemini, and Copilot,
-              turning AI answers into your next customer.
+              Cinder helps Canadian brands, and the agencies behind them, earn{" "}
+              <strong className="font-semibold text-xl text-black">visibility</strong>{" "}
+              inside{" "}
+              <strong className="font-semibold text-xl text-black">
+                ChatGPT, Perplexity, Gemini, and Copilot
+              </strong>
+              , turning AI answers into{" "}
+              <span className="underline decoration-2 underline-offset-4 decoration-black">
+                your next customer
+              </span>
+              .
             </p>
             <Link
               href="/contact"
