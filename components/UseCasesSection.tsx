@@ -23,7 +23,7 @@ export default function UseCasesSection() {
             <strong className="font-semibold text-lg text-black">AI visibility</strong>{" "}
             for brands, agencies, and enterprise marketing teams across
             Canada who need to be{" "}
-            <span className="underline decoration-2 underline-offset-4 decoration-black">
+            <span className="font-semibold text-lg underline decoration-2 underline-offset-4 decoration-black">
               found, and trusted
             </span>
             , inside AI generated answers.

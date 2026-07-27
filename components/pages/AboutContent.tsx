@@ -56,7 +56,7 @@ export default function AboutContent() {
             front door of the internet
           </strong>{" "}
           is changing. Cinder exists to make sure your name is{" "}
-          <span className="underline decoration-2 underline-offset-4 decoration-black">
+          <span className="font-semibold text-xl md:text-2xl underline decoration-2 underline-offset-4 decoration-black">
             the one it gives
           </span>
           .

@@ -54,7 +54,7 @@ export default function CaseStudiesContent() {
               visibility
             </strong>{" "}
             inside{" "}
-            <span className="underline decoration-2 underline-offset-4 decoration-black">
+            <span className="font-semibold text-xl md:text-2xl underline decoration-2 underline-offset-4 decoration-black">
               AI generated answers
             </span>
             . Placeholder results shown below.

@@ -33,7 +33,7 @@ export default function HeroSection() {
                 ChatGPT, Perplexity, Gemini, and Copilot
               </strong>
               , turning AI answers into{" "}
-              <span className="underline decoration-2 underline-offset-4 decoration-black">
+              <span className="font-semibold text-xl underline decoration-2 underline-offset-4 decoration-black">
                 your next customer
               </span>
               .

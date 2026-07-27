@@ -27,7 +27,7 @@ const paths = [
         <strong className="font-semibold text-lg text-white">AI presence</strong>{" "}
         directly, so you show up in the answers your customers are already
         asking,{" "}
-        <span className="underline decoration-2 underline-offset-4 decoration-white/70">
+        <span className="font-semibold text-lg underline decoration-2 underline-offset-4 decoration-white/70">
           without hiring for it
         </span>
         .

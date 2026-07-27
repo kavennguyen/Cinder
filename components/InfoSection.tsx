@@ -39,7 +39,7 @@ export default function InfoSection() {
               </strong>{" "}
               for agencies and small businesses dedicated to optimizing your
               online presence. One engine,{" "}
-              <span className="underline decoration-2 underline-offset-4 decoration-black">
+              <span className="font-semibold text-3xl md:text-4xl underline decoration-2 underline-offset-4 decoration-black">
                 two ways to get named
               </span>
               .
@@ -103,7 +103,7 @@ export default function InfoSection() {
                 citations and rankings
               </strong>{" "}
               for you,{" "}
-              <span className="underline decoration-2 underline-offset-4 decoration-white/60">
+              <span className="font-semibold text-lg underline decoration-2 underline-offset-4 decoration-white/60">
                 continuously
               </span>
               .

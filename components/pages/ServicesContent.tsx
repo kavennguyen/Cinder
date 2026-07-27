@@ -89,7 +89,7 @@ export default function ServicesContent() {
             AI visibility platform
           </strong>{" "}
           for the age of answer engines. However you want to win{" "}
-          <span className="underline decoration-2 underline-offset-4 decoration-black">
+          <span className="font-semibold text-xl md:text-2xl underline decoration-2 underline-offset-4 decoration-black">
             AI search
           </span>
           , we have a way in: a dashboard for agencies, and a done for you
@@ -212,7 +212,7 @@ export default function ServicesContent() {
             as a service without building the machinery themselves. What used
             to take scattered tools, manual prompting, and guesswork becomes
             one{" "}
-            <span className="underline decoration-2 underline-offset-4 decoration-black">
+            <span className="font-semibold text-xl underline decoration-2 underline-offset-4 decoration-black">
               clean, repeatable workflow
             </span>
             , so your team spends time on strategy instead of assembly.
@@ -273,7 +273,7 @@ export default function ServicesContent() {
             using the same platform that powers our dashboard, so you show up
             in the AI answers your customers are already asking, from the
             questions they type into ChatGPT to{" "}
-            <span className="underline decoration-2 underline-offset-4 decoration-black">
+            <span className="font-semibold text-xl underline decoration-2 underline-offset-4 decoration-black">
               the recommendations they trust
             </span>
             .
