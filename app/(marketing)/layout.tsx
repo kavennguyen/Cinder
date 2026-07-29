@@ -6,7 +6,7 @@ import type { ReactNode } from "react";
 export default function MarketingLayout({ children }: { children: ReactNode }) {
   useEffect(() => {
     document.body.style.backgroundColor = "#000";
-    document.documentElement.style.fontSize = "20px";
+    document.documentElement.style.fontSize = "18px";
     return () => {
       document.body.style.backgroundColor = "";
       document.documentElement.style.fontSize = "";
