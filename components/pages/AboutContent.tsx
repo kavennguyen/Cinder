@@ -51,9 +51,9 @@ export default function AboutContent() {
           About Cinder
         </h1>
         <p className="text-black/70 text-lg md:text-xl leading-relaxed">
-          The{" "}
+          The way people{" "}
           <strong className="font-semibold text-xl md:text-2xl text-black">
-            front door of the internet
+            search things on the internet
           </strong>{" "}
           is changing. Cinder exists to make sure your name is{" "}
           <span className="font-semibold text-xl md:text-2xl underline decoration-2 underline-offset-4 decoration-black">
@@ -83,8 +83,8 @@ export default function AboutContent() {
               className="mr-auto h-12 w-12 rounded-full object-cover"
             />
             <div>
-              <p className="mb-2 text-lg font-semibold text-white">
-                The future will be spoken by machines.
+              <p className="mb-2 text-2xl font-semibold text-white">
+                The future will be spoken by you.
               </p>
               <p className="text-white/60 text-sm leading-relaxed">
                 We make sure your name is in the sentence.
