@@ -44,6 +44,9 @@ same Supabase database either way).
 | `CRON_SECRET` | Random hex string protecting the daily cron endpoint |
 | `NEXT_PUBLIC_SITE_URL` | Set to a placeholder for now: `https://example.com` — fixed in step 7 |
 
+There is a seventh, optional variable: `DAILY_RUNS_ENABLED` (see step 8). Leave
+it unset for now — daily runs are intentionally off.
+
 Paste values exactly: no quotes, no trailing spaces or newlines.
 
 ## 6. Deploy
@@ -58,12 +61,27 @@ Click **Deploy** and wait ~1–2 minutes. You'll get a production URL like
   (no trailing slash)
 - **Deployments** tab → latest deployment → **⋯ → Redeploy**
 
-## 8. Confirm the cron job exists
+## 8. Confirm the cron job exists (currently a no-op)
 
 Project → **Settings → Cron Jobs** (or the Cron Jobs tab). You should see
 `/api/cron/run-prompts` scheduled daily at 11:00 UTC. Click **Run** to fire
-it once manually — it should return a JSON response with an `orgs` count
-(not an "Unauthorized" error).
+it once manually — it should return `{"skipped": true, …}` (not an
+"Unauthorized" error).
+
+**Daily runs are switched off** while there are no clients; testing is done by
+hand with the "Run prompts" button in the dashboard. The cron still fires, but
+the route returns immediately without calling Gemini or writing any data.
+
+To turn daily runs on or off:
+
+| Want | Do this |
+|---|---|
+| **On** | Add env var `DAILY_RUNS_ENABLED` = `true`, then redeploy |
+| **Off** | Delete `DAILY_RUNS_ENABLED` (or set it to `false`), then redeploy |
+
+Only the exact string `true` turns it on — missing or any other value means
+off. Env var changes need a redeploy (**Deployments → ⋯ → Redeploy**) to take
+effect. Locally, set the same variable in `.env.local`.
 
 ## 9. Hand off to Vince
 
