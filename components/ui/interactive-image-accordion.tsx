@@ -115,20 +115,24 @@ function AccordionItem({
 
       <div
         aria-hidden={!isOpen}
-        className={`absolute inset-0 flex flex-col justify-end p-5 md:p-6 transition-opacity duration-[800ms] ease-out ${
+        // Fixed width rather than inset-0: the card animates 48px -> 228px, and
+        // an overlay that tracked that width would re-wrap the text on every
+        // frame. Pinning it to the open width means the copy is laid out once
+        // and only fades. Overflow is clipped by the card while collapsed.
+        className={`absolute inset-y-0 left-0 w-[228px] md:w-[320px] flex flex-col justify-end p-5 md:p-6 transition-opacity duration-[800ms] ease-out ${
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       >
         <h3
-          className={`text-white text-lg md:text-xl font-semibold mb-2 transition-all duration-[800ms] delay-100 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-            isOpen ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+          className={`text-white text-lg md:text-xl font-semibold mb-2 transition-opacity md:transition-all duration-[800ms] delay-100 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            isOpen ? "opacity-100 md:translate-y-0" : "opacity-0 md:translate-y-3"
           }`}
         >
           {item.title}
         </h3>
         <p
-          className={`text-white/80 text-[13px] md:text-sm leading-relaxed transition-all duration-[800ms] delay-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-            isOpen ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+          className={`text-white/80 text-[13px] md:text-sm leading-relaxed transition-opacity md:transition-all duration-[800ms] delay-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            isOpen ? "opacity-100 md:translate-y-0" : "opacity-0 md:translate-y-3"
           }`}
         >
           {item.description}
@@ -143,16 +147,17 @@ export function ImageAccordion() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   function handleHover(index: number) {
+    // Hovering now expands AND reveals the description together, so desktop
+    // users never need to click at all — mousing across the row is enough.
     setActiveIndex(index);
-    setOpenIndex(null);
+    setOpenIndex(index);
   }
 
   function handleClick(index: number) {
-    // Touch devices have no hover to preview a card with, so a tap has to do
-    // everything at once: expand the card and reveal its description. Tapping
-    // an already-open card keeps it open rather than toggling it shut, so the
-    // info never disappears out from under a thumb. Desktop keeps the
-    // hover-to-preview, click-to-toggle behaviour.
+    // Touch devices have no hover, so a tap has to do everything at once:
+    // expand the card and reveal its description. Tapping an already-open
+    // card keeps it open rather than toggling it shut, so the info never
+    // disappears out from under a thumb.
     const isTouch =
       typeof window !== "undefined" &&
       !window.matchMedia("(hover: hover)").matches;
@@ -163,12 +168,11 @@ export function ImageAccordion() {
       return;
     }
 
-    if (index === activeIndex && openIndex === index) {
-      setOpenIndex(null);
-    } else {
-      setActiveIndex(index);
-      setOpenIndex(index);
-    }
+    // On desktop, hover already opens the card. A click just keeps it locked
+    // open at the current index (useful for touchpad/keyboard users, and a
+    // no-op in the common hover-driven case).
+    setActiveIndex(index);
+    setOpenIndex(index);
   }
 
   return (
