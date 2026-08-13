@@ -69,10 +69,17 @@ function AccordionItem({
 }: AccordionItemProps) {
   return (
     <div
-      className={`relative h-[420px] rounded-2xl overflow-hidden cursor-pointer transition-all duration-700 ease-in-out ${
-        isActive ? "w-[320px]" : "w-[56px]"
+      className={`relative h-[360px] md:h-[420px] shrink-0 snap-center rounded-2xl overflow-hidden cursor-pointer transition-[width] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        isActive
+          ? "w-[228px] md:w-[320px]"
+          : "w-[48px] md:w-[56px]"
       }`}
-      onMouseEnter={onHover}
+      // Pointer-type guard: on touch devices a tap emits a synthetic mouse
+      // enter as well as a click, which fired two competing state updates
+      // and made the panel flicker. Only mice drive the hover behaviour.
+      onPointerEnter={(e) => {
+        if (e.pointerType === "mouse") onHover();
+      }}
       onClick={onClick}
     >
       <img
@@ -91,28 +98,42 @@ function AccordionItem({
         }`}
       />
 
-      {!isOpen && (
-        <span
-          className={`absolute text-white text-lg font-semibold whitespace-nowrap transition-all duration-300 ease-in-out ${
-            isActive
-              ? "bottom-6 left-1/2 -translate-x-1/2 rotate-0"
-              : "w-auto text-left bottom-24 left-1/2 -translate-x-1/2 rotate-90"
+      {/* Title and description stay mounted and cross-fade, so the words
+          ease in and out instead of popping. Only opacity/transform
+          animate, which the compositor can handle without relayout. */}
+      <span
+        className={`absolute text-white text-lg font-semibold whitespace-nowrap transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          isOpen ? "opacity-0" : "opacity-100"
+        } ${
+          isActive
+            ? "bottom-6 left-1/2 -translate-x-1/2 rotate-0"
+            : "w-auto text-left bottom-24 left-1/2 -translate-x-1/2 rotate-90"
+        }`}
+      >
+        {item.title}
+      </span>
+
+      <div
+        aria-hidden={!isOpen}
+        className={`absolute inset-0 flex flex-col justify-end p-5 md:p-6 transition-opacity duration-500 ease-out ${
+          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+      >
+        <h3
+          className={`text-white text-lg md:text-xl font-semibold mb-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            isOpen ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
           }`}
         >
           {item.title}
-        </span>
-      )}
-
-      {isOpen && (
-        <div className="absolute inset-0 flex flex-col justify-end p-6">
-          <h3 className="text-white text-xl font-semibold mb-2">
-            {item.title}
-          </h3>
-          <p className="text-white/80 text-sm leading-relaxed">
-            {item.description}
-          </p>
-        </div>
-      )}
+        </h3>
+        <p
+          className={`text-white/80 text-[13px] md:text-sm leading-relaxed transition-all duration-500 delay-75 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            isOpen ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+          }`}
+        >
+          {item.description}
+        </p>
+      </div>
     </div>
   );
 }
@@ -136,7 +157,7 @@ export function ImageAccordion() {
   }
 
   return (
-    <div className="flex flex-row items-center justify-center gap-3 overflow-x-auto p-4">
+    <div className="flex flex-row items-center justify-start md:justify-center gap-2.5 md:gap-3 overflow-x-auto snap-x snap-mandatory scroll-smooth p-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {pillars.map((item, index) => (
         <AccordionItem
           key={item.id}
