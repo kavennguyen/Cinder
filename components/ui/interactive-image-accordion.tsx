@@ -69,7 +69,7 @@ function AccordionItem({
 }: AccordionItemProps) {
   return (
     <div
-      className={`relative h-[360px] md:h-[420px] shrink-0 snap-center rounded-2xl overflow-hidden cursor-pointer transition-[width] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+      className={`relative h-[360px] md:h-[420px] shrink-0 snap-center rounded-2xl overflow-hidden cursor-pointer transition-[width] duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
         isActive
           ? "w-[228px] md:w-[320px]"
           : "w-[48px] md:w-[56px]"
@@ -93,7 +93,7 @@ function AccordionItem({
         }}
       />
       <div
-        className={`absolute inset-0 transition-colors duration-500 ${
+        className={`absolute inset-0 transition-colors duration-[800ms] ${
           isOpen ? "bg-black/70" : "bg-black/40"
         }`}
       />
@@ -102,7 +102,7 @@ function AccordionItem({
           ease in and out instead of popping. Only opacity/transform
           animate, which the compositor can handle without relayout. */}
       <span
-        className={`absolute text-white text-lg font-semibold whitespace-nowrap transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        className={`absolute text-white text-lg font-semibold whitespace-nowrap transition-all duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isOpen ? "opacity-0" : "opacity-100"
         } ${
           isActive
@@ -115,19 +115,19 @@ function AccordionItem({
 
       <div
         aria-hidden={!isOpen}
-        className={`absolute inset-0 flex flex-col justify-end p-5 md:p-6 transition-opacity duration-500 ease-out ${
+        className={`absolute inset-0 flex flex-col justify-end p-5 md:p-6 transition-opacity duration-[800ms] ease-out ${
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       >
         <h3
-          className={`text-white text-lg md:text-xl font-semibold mb-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          className={`text-white text-lg md:text-xl font-semibold mb-2 transition-all duration-[800ms] delay-100 ease-[cubic-bezier(0.16,1,0.3,1)] ${
             isOpen ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
           }`}
         >
           {item.title}
         </h3>
         <p
-          className={`text-white/80 text-[13px] md:text-sm leading-relaxed transition-all duration-500 delay-75 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          className={`text-white/80 text-[13px] md:text-sm leading-relaxed transition-all duration-[800ms] delay-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
             isOpen ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
           }`}
         >
@@ -148,6 +148,21 @@ export function ImageAccordion() {
   }
 
   function handleClick(index: number) {
+    // Touch devices have no hover to preview a card with, so a tap has to do
+    // everything at once: expand the card and reveal its description. Tapping
+    // an already-open card keeps it open rather than toggling it shut, so the
+    // info never disappears out from under a thumb. Desktop keeps the
+    // hover-to-preview, click-to-toggle behaviour.
+    const isTouch =
+      typeof window !== "undefined" &&
+      !window.matchMedia("(hover: hover)").matches;
+
+    if (isTouch) {
+      setActiveIndex(index);
+      setOpenIndex(index);
+      return;
+    }
+
     if (index === activeIndex && openIndex === index) {
       setOpenIndex(null);
     } else {
