@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
+import { ChevronDown } from "lucide-react";
 
 interface AccordionPillar {
   id: number;
@@ -53,6 +54,11 @@ const pillars: AccordionPillar[] = [
   },
 ];
 
+// ---------------------------------------------------------------------------
+// Desktop: horizontal width-accordion, unchanged from the version already
+// confirmed to feel right there. Hidden below md.
+// ---------------------------------------------------------------------------
+
 interface AccordionItemProps {
   item: AccordionPillar;
   isActive: boolean;
@@ -72,14 +78,9 @@ function AccordionItem({
     <motion.div
       layout
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      className={`relative h-[360px] md:h-[420px] shrink-0 snap-center rounded-2xl overflow-hidden cursor-pointer ${
-        isActive
-          ? "w-[228px] md:w-[320px]"
-          : "w-[48px] md:w-[56px]"
+      className={`relative h-[420px] shrink-0 rounded-2xl overflow-hidden cursor-pointer ${
+        isActive ? "w-[320px]" : "w-[56px]"
       }`}
-      // Pointer-type guard: on touch devices a tap emits a synthetic mouse
-      // enter as well as a click, which fired two competing state updates
-      // and made the panel flicker. Only mice drive the hover behaviour.
       onPointerEnter={(e) => {
         if (e.pointerType === "mouse") onHover();
       }}
@@ -101,9 +102,6 @@ function AccordionItem({
         }`}
       />
 
-      {/* Title and description stay mounted and cross-fade, so the words
-          ease in and out instead of popping. Only opacity/transform
-          animate, which the compositor can handle without relayout. */}
       <span
         className={`absolute text-white text-lg font-semibold whitespace-nowrap transition-all duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isOpen ? "opacity-0" : "opacity-100"
@@ -118,24 +116,20 @@ function AccordionItem({
 
       <div
         aria-hidden={!isOpen}
-        // Fixed width rather than inset-0: the card animates 48px -> 228px, and
-        // an overlay that tracked that width would re-wrap the text on every
-        // frame. Pinning it to the open width means the copy is laid out once
-        // and only fades. Overflow is clipped by the card while collapsed.
-        className={`absolute inset-y-0 left-0 w-[228px] md:w-[320px] flex flex-col justify-end p-5 md:p-6 transition-opacity duration-[800ms] ease-out ${
+        className={`absolute inset-y-0 left-0 w-[320px] flex flex-col justify-end p-6 transition-opacity duration-[800ms] ease-out ${
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       >
         <h3
-          className={`text-white text-lg md:text-xl font-semibold mb-2 transition-opacity md:transition-all duration-[800ms] delay-100 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-            isOpen ? "opacity-100 md:translate-y-0" : "opacity-0 md:translate-y-3"
+          className={`text-white text-xl font-semibold mb-2 transition-all duration-[800ms] delay-100 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            isOpen ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
           }`}
         >
           {item.title}
         </h3>
         <p
-          className={`text-white/80 text-[13px] md:text-sm leading-relaxed transition-opacity md:transition-all duration-[800ms] delay-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-            isOpen ? "opacity-100 md:translate-y-0" : "opacity-0 md:translate-y-3"
+          className={`text-white/80 text-sm leading-relaxed transition-all duration-[800ms] delay-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            isOpen ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
           }`}
         >
           {item.description}
@@ -145,41 +139,22 @@ function AccordionItem({
   );
 }
 
-export function ImageAccordion() {
+function DesktopAccordion() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   function handleHover(index: number) {
-    // Hovering now expands AND reveals the description together, so desktop
-    // users never need to click at all — mousing across the row is enough.
     setActiveIndex(index);
     setOpenIndex(index);
   }
 
   function handleClick(index: number) {
-    // Touch devices have no hover, so a tap has to do everything at once:
-    // expand the card and reveal its description. Tapping an already-open
-    // card keeps it open rather than toggling it shut, so the info never
-    // disappears out from under a thumb.
-    const isTouch =
-      typeof window !== "undefined" &&
-      !window.matchMedia("(hover: hover)").matches;
-
-    if (isTouch) {
-      setActiveIndex(index);
-      setOpenIndex(index);
-      return;
-    }
-
-    // On desktop, hover already opens the card. A click just keeps it locked
-    // open at the current index (useful for touchpad/keyboard users, and a
-    // no-op in the common hover-driven case).
     setActiveIndex(index);
     setOpenIndex(index);
   }
 
   return (
-    <div className="flex flex-row items-center justify-start md:justify-center gap-2.5 md:gap-3 overflow-x-auto snap-x snap-mandatory scroll-smooth p-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <div className="hidden md:flex flex-row items-center justify-center gap-3 p-4">
       {pillars.map((item, index) => (
         <AccordionItem
           key={item.id}
@@ -191,5 +166,92 @@ export function ImageAccordion() {
         />
       ))}
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Mobile: vertical stacked list, all five titles on screen at once. Tapping
+// expands height in place instead of animating width across a scrolling row —
+// no sibling reflow to fight, and rapid taps between far-apart rows cost the
+// same as taps between adjacent ones, since only height changes.
+// ---------------------------------------------------------------------------
+
+function MobileAccordionItem({
+  item,
+  isOpen,
+  onClick,
+}: {
+  item: AccordionPillar;
+  isOpen: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <div className="border-b border-black/10 last:border-b-0">
+      <button
+        type="button"
+        onClick={onClick}
+        className="flex w-full items-center gap-3 py-4 text-left"
+      >
+        <img
+          src={item.imageUrl}
+          alt={item.title}
+          className="h-14 w-14 shrink-0 rounded-xl object-cover"
+          onError={(e) => {
+            const img = e.target as HTMLImageElement;
+            img.onerror = null;
+            img.src = "https://placehold.co/200x200/1a1815/ffffff?text=Cinder";
+          }}
+        />
+        <span className="flex-1 text-black text-base font-semibold">
+          {item.title}
+        </span>
+        <ChevronDown
+          className={`h-5 w-5 shrink-0 text-black/40 transition-transform duration-300 ${
+            isOpen ? "rotate-180" : ""
+          }`}
+        />
+      </button>
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden"
+          >
+            <p className="pb-4 pl-[68px] pr-2 text-sm leading-relaxed text-black/60">
+              {item.description}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function MobileAccordion() {
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  return (
+    <div className="flex md:hidden flex-col rounded-2xl border border-black/10 px-4">
+      {pillars.map((item, index) => (
+        <MobileAccordionItem
+          key={item.id}
+          item={item}
+          isOpen={openIndex === index}
+          onClick={() => setOpenIndex(openIndex === index ? null : index)}
+        />
+      ))}
+    </div>
+  );
+}
+
+export function ImageAccordion() {
+  return (
+    <>
+      <DesktopAccordion />
+      <MobileAccordion />
+    </>
   );
 }
