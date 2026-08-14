@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "motion/react";
 
 interface AccordionPillar {
   id: number;
@@ -68,8 +69,10 @@ function AccordionItem({
   onClick,
 }: AccordionItemProps) {
   return (
-    <div
-      className={`relative h-[360px] md:h-[420px] shrink-0 snap-center rounded-2xl overflow-hidden cursor-pointer transition-[width] duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
+    <motion.div
+      layout
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      className={`relative h-[360px] md:h-[420px] shrink-0 snap-center rounded-2xl overflow-hidden cursor-pointer ${
         isActive
           ? "w-[228px] md:w-[320px]"
           : "w-[48px] md:w-[56px]"
@@ -138,7 +141,7 @@ function AccordionItem({
           {item.description}
         </p>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
