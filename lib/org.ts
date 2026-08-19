@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { cookies } from "next/headers";
 
 import { createClient } from "@/lib/supabase/server";
@@ -34,7 +35,7 @@ export function isSupabaseConfiguredServer() {
  * org-switcher cookie, falling back to their own org. Admins can operate on
  * every org — RLS grants them read everywhere and change-log write.
  */
-export async function getUserOrg(): Promise<UserOrg | null> {
+async function loadUserOrg(): Promise<UserOrg | null> {
   if (!isSupabaseConfiguredServer()) return null;
 
   const supabase = await createClient();
@@ -108,6 +109,20 @@ export async function getUserOrg(): Promise<UserOrg | null> {
     competitorLimit,
   };
 }
+
+/**
+ * Request-scoped memoisation of the org lookup.
+ *
+ * The dashboard layout and the page rendered inside it both need the org, so
+ * the whole auth -> memberships -> org -> subscription -> plan chain (up to
+ * six sequential round-trips) was running twice for every navigation.
+ * React's cache() collapses that to one call per request.
+ *
+ * Note this is deliberately NOT a cross-request cache: cache() is scoped to a
+ * single server request, so an org switch, a plan change, or a different
+ * signed-in user is never served stale data.
+ */
+export const getUserOrg = cache(loadUserOrg);
 
 /** All orgs, for the admin org switcher. Returns [] for non-admins (RLS). */
 export async function listAllOrgs(): Promise<OrgListItem[]> {
