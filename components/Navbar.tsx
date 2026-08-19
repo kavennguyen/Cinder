@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { Menu, X } from "lucide-react";
 
@@ -15,6 +16,14 @@ const navLinks = [
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  /**
+   * Treat nested routes as part of their section (e.g. /services/foo still
+   * highlights Services), while keeping "/" from matching everything.
+   */
+  const isCurrent = (href: string) =>
+    pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <>
@@ -34,16 +43,24 @@ export default function Navbar() {
               <span className="text-white font-semibold text-lg">Cinder</span>
             </Link>
 
-            <div className="hidden md:flex items-center gap-8 text-white/70 text-sm font-medium">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="hover:text-white transition-colors duration-300"
-                >
-                  {link.label}
-                </Link>
-              ))}
+            <div className="hidden md:flex items-center gap-8 text-sm">
+              {navLinks.map((link) => {
+                const current = isCurrent(link.href);
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    aria-current={current ? "page" : undefined}
+                    className={`transition-colors duration-300 ${
+                      current
+                        ? "text-white font-semibold"
+                        : "text-white/70 font-medium hover:text-white"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
             </div>
           </div>
 
@@ -113,17 +130,31 @@ export default function Navbar() {
                 </button>
               </div>
 
-              <div className="flex flex-col gap-6 text-white/70 text-lg font-medium">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="hover:text-white transition-colors duration-300"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
+              <div className="flex flex-col gap-6 text-lg">
+                {navLinks.map((link) => {
+                  const current = isCurrent(link.href);
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      aria-current={current ? "page" : undefined}
+                      className={`flex items-center gap-3 transition-colors duration-300 ${
+                        current
+                          ? "text-white font-semibold"
+                          : "text-white/70 font-medium hover:text-white"
+                      }`}
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <span
+                        aria-hidden="true"
+                        className={`h-4 w-0.5 rounded-full transition-colors duration-300 ${
+                          current ? "bg-[#FF6E00]" : "bg-transparent"
+                        }`}
+                      />
+                      {link.label}
+                    </Link>
+                  );
+                })}
               </div>
 
               <div className="mt-auto flex flex-col gap-4">
