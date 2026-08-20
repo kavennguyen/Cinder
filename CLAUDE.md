@@ -4,6 +4,61 @@ Cinder is an AI visibility / answer-engine-optimization (AEO) platform for Canad
 Two business lines: a self-serve dashboard for agencies, and a done-for-you
 managed service for small businesses.
 
+## How Kaven wants you to work — ask, don't assume
+
+Read the whole request and work out what it actually asks for. Then, **wherever
+anything is unclear, underspecified, or open to more than one reading, stop and
+ask before writing code.** Do not fill the gap with your own judgement and do not
+guess at intent, even when a default looks obvious.
+
+Ask about, at minimum:
+
+- Wording and copy. Never invent brand copy, headings, taglines or feature
+  descriptions and ship them as if decided. Draft and confirm.
+- Scope. Which pages, which sections, replace versus add alongside.
+- Anything factual you cannot verify in the repo: metrics, client names, claims
+  about what the product does. Check the code first; if it is not there, ask.
+  See "Only claim what the product does" below.
+- Design choices with more than one sensible answer: sizing, placement, colour,
+  how much of an existing design to keep.
+- Any request that would touch Vince's side of the codebase.
+
+Prefer `AskUserQuestion` with concrete options over open questions, and ask
+everything you need up front in one batch rather than drip-feeding. If a
+question is genuinely blocking, do the parts that are not blocked, then ask.
+
+What this rule does **not** cover. Do not ask about any of these — work them
+out and get on with it:
+
+- **Anything already answered.** If Kaven said it earlier in the conversation,
+  or this file documents it, use it. Never make him repeat himself.
+- **Technical and mechanical decisions**: which library, how to structure a
+  component, what to name a file, how to implement something. The conventions
+  below settle most of these; where they don't, use your judgement.
+- **Adapting pasted third-party components.** Every component Kaven pastes has
+  needed reworking for this codebase (shadcn, GSAP, `next/image`, missing
+  dependencies, dark-mode classes, wrong fonts). Adapt it to the conventions
+  here and state what you changed. That is expected work, not a question.
+
+The rule is about *intent and content* — what to say, what to build, how much
+of it. Not about *how to build it*.
+
+## Only claim what the product does
+
+The marketing site has repeatedly overstated the product. Before writing any
+copy that makes a claim, verify it against the code, then say what you checked.
+
+- Live engines are whatever `lib/ai/engines.ts` registers. It has been
+  ChatGPT, Perplexity and Gemini. Claude and Copilot are **not implemented**
+  and must be described as coming, not live.
+- `getShareOfVoice()` in `lib/visibility.ts` is real, so "share of AI voice" is
+  defensible. Check before leaning on any other metric.
+- Case study companies and figures in `components/pages/CaseStudiesContent.tsx`
+  are **invented**, and per Kaven's decision they ship without a disclaimer.
+  Do not add more invented numbers, and do not present them as real elsewhere.
+- Never fabricate a statistic to make an argument land. Argue from a mechanism
+  you can explain instead.
+
 ## Repo layout and git
 
 - Working dir: `~/Desktop/cinder/cinder-nextjs`. It is a **git worktree** of
