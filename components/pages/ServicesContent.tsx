@@ -2,9 +2,24 @@
 
 import Link from "next/link";
 import { motion } from "motion/react";
-import { ArrowRight, Check } from "lucide-react";
+import {
+  Activity,
+  ArrowRight,
+  Briefcase,
+  CalendarClock,
+  FileText,
+  GraduationCap,
+  LayoutDashboard,
+  Phone,
+  Quote,
+  Target,
+  TrendingUp,
+  UserCheck,
+  Users,
+} from "lucide-react";
 
 import PageShell from "@/components/PageShell";
+import { FeatureGrid, type Feature } from "@/components/ui/feature-grid";
 import { revealVariants } from "@/lib/motion";
 
 const chartLines = [
@@ -46,20 +61,82 @@ const statCards = [
   },
 ];
 
-const agencyFeatures = [
-  "Track AI visibility across every client, in one dashboard",
-  "Benchmark share of voice against competitors",
-  "See exactly which sources get cited, and where the gaps are",
-  "Surface the highest impact actions to take next",
-  "White label reports under your own brand",
-  "Multiple client workspaces",
+const agencyFeatures: Feature[] = [
+  {
+    icon: LayoutDashboard,
+    title: "Every client in one place",
+    description:
+      "Track AI visibility across your whole roster without switching tools or re-running prompts by hand.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Competitor benchmarking",
+    description:
+      "See your share of AI voice next to the brands you are up against, so progress is measured, not asserted.",
+  },
+  {
+    icon: Quote,
+    title: "Citation sources",
+    description:
+      "See which pages the engines actually quote, and which questions your client is missing from entirely.",
+  },
+  {
+    icon: Target,
+    title: "Highest impact actions",
+    description:
+      "The gaps are ranked, so your team spends its hours on the work most likely to move a score.",
+  },
+  {
+    icon: FileText,
+    title: "White label reporting",
+    description:
+      "Send clients a report under your own brand. Cinder does the measuring and stays out of the way.",
+  },
+  {
+    icon: Users,
+    title: "Unlimited client workspaces",
+    description:
+      "Add every client you manage. Pro has no per-client pricing and no seat maths to work around.",
+  },
 ];
 
-const smallBusinessFeatures = [
-  "The same platform that powers our dashboard, run by our team, for you",
-  "Billed as an ongoing monthly retainer, not a one time project",
-  "No need to hire or learn a new discipline",
-  "You run your business. We make sure AI recommends it.",
+const smallBusinessFeatures: Feature[] = [
+  {
+    icon: UserCheck,
+    title: "Our team runs it",
+    description:
+      "The same platform that powers the dashboard, operated for you by the people who built it.",
+  },
+  {
+    icon: GraduationCap,
+    title: "Nothing new to learn",
+    description:
+      "No dashboard to log into and no new discipline to hire for. You never have to touch the tooling.",
+  },
+  {
+    icon: CalendarClock,
+    title: "An ongoing retainer",
+    description:
+      "Billed monthly rather than as a one time project, because AI engines keep changing their answers.",
+  },
+  {
+    icon: Phone,
+    title: "Monthly strategy calls",
+    description:
+      "A standing call to walk through what moved, what we changed, and what is worth doing next.",
+  },
+  {
+    icon: Activity,
+    title: "Continuous adjustments",
+    description:
+      "We keep monitoring after the first fixes ship and adjust as the engines shift what they cite.",
+  },
+  {
+    icon: Briefcase,
+    title: "You run your business",
+    description:
+      "You stay focused on the work you actually do. We make sure AI recommends it when someone asks.",
+  },
 ];
 
 export default function ServicesContent() {
@@ -73,7 +150,10 @@ export default function ServicesContent() {
         className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-start mb-16"
       >
         <div>
-          <p className="text-black/60 text-sm mb-2">What We Do</p>
+          <p className="flex items-center gap-2.5 text-[#FF6E00] text-sm font-medium uppercase tracking-[0.15em] mb-3">
+            <span aria-hidden="true" className="h-px w-6 bg-[#FF6E00]" />
+            What We Do
+          </p>
           <h1
             className="text-black text-4xl md:text-6xl font-medium leading-tight"
             style={{ letterSpacing: "-0.03em" }}
@@ -106,12 +186,16 @@ export default function ServicesContent() {
         className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4 mb-24"
       >
         <div className="rounded-2xl border border-black/10 bg-white/40 p-8 md:p-12">
-          <p className="text-black/60 text-sm mb-2">See The Dashboard</p>
+          <p className="flex items-center gap-2.5 text-[#FF6E00] text-sm font-medium uppercase tracking-[0.15em] mb-3">
+            <span aria-hidden="true" className="h-px w-6 bg-[#FF6E00]" />
+            See The Dashboard
+          </p>
           <h2
             className="text-black text-4xl md:text-5xl font-medium leading-tight mb-8 max-w-xl"
             style={{ letterSpacing: "-0.02em" }}
           >
-            This is what tracking your AI visibility looks like
+            This is what tracking your{" "}
+            <span className="text-[#FF6E00]">AI visibility</span> looks like
           </h2>
 
           <svg viewBox="0 0 720 240" className="w-full h-auto mb-6">
@@ -185,125 +269,114 @@ export default function ServicesContent() {
         </div>
       </motion.div>
 
-      {/* Track 1 - Agencies */}
-      <motion.div
-        id="agencies"
-        custom={2}
-        initial="hidden"
-        animate="visible"
-        variants={revealVariants}
-        className="scroll-mt-32 pt-16 border-t border-black/10 mb-24"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-start mb-10">
-          <div>
-            <p className="text-black/60 text-sm mb-2">For Agencies</p>
+      {/* Tracks side by side. The parent defines three rows (header, cards,
+          CTA) and each track spans them with grid-rows-subgrid, so both
+          columns share row tracks and their grids line up even though the
+          headings and intro copy differ in length. */}
+      <div className="pt-16 border-t border-black/10 grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-[auto_auto_auto] gap-12 lg:gap-x-10 lg:gap-y-0">
+        {/* Track 1 - Agencies */}
+        <motion.div
+          id="agencies"
+          custom={2}
+          initial="hidden"
+          animate="visible"
+          variants={revealVariants}
+          className="scroll-mt-32 lg:row-span-3 lg:grid lg:grid-rows-subgrid"
+        >
+          <div className="mb-8">
+            <p className="flex items-center gap-2.5 text-[#FF6E00] text-sm font-medium uppercase tracking-[0.15em] mb-3">
+              <span aria-hidden="true" className="h-px w-6 bg-[#FF6E00]" />
+              For Agencies
+            </p>
             <h2
-              className="text-black text-4xl md:text-5xl font-medium leading-tight"
+              className="text-black text-3xl md:text-4xl font-medium leading-tight mb-4"
               style={{ letterSpacing: "-0.02em" }}
             >
-              Every client&apos;s AI visibility, in one place.
+              Every client&apos;s{" "}
+              <span className="text-[#FF6E00]">AI visibility</span>, in one
+              place.
             </h2>
+            <p className="text-black/70 text-lg leading-relaxed">
+              The Cinder dashboard is built for agencies who want to offer{" "}
+              <strong className="font-semibold text-xl text-black">
+                AI visibility
+              </strong>{" "}
+              as a service without building the machinery themselves. What used
+              to take scattered tools, manual prompting, and guesswork becomes
+              one{" "}
+              <span className="font-semibold text-xl underline decoration-2 underline-offset-4 decoration-black">
+                clean, repeatable workflow
+              </span>
+              .
+            </p>
           </div>
-          <p className="text-black/70 text-lg leading-relaxed md:pt-3">
-            The Cinder dashboard is built for agencies who want to offer{" "}
-            <strong className="font-semibold text-xl text-black">
-              AI visibility
-            </strong>{" "}
-            as a service without building the machinery themselves. What used
-            to take scattered tools, manual prompting, and guesswork becomes
-            one{" "}
-            <span className="font-semibold text-xl underline decoration-2 underline-offset-4 decoration-black">
-              clean, repeatable workflow
+
+          <div className="mb-8">
+            <FeatureGrid features={agencyFeatures} columns={2} glow />
+          </div>
+
+          <Link
+            href="/contact"
+            className="inline-flex w-fit items-center gap-3 self-start bg-black text-white text-base font-medium pl-8 pr-2 py-2 rounded-full hover:bg-[#FF6E00] transition-colors duration-200"
+          >
+            Start Free
+            <span className="bg-white rounded-full p-2">
+              <ArrowRight className="w-5 h-5 text-black" />
             </span>
-            , so your team spends time on strategy instead of assembly.
-          </p>
-        </div>
+          </Link>
+        </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
-          {agencyFeatures.map((feature) => (
-            <div
-              key={feature}
-              className="rounded-2xl bg-black p-6 flex items-start gap-3"
-            >
-              <Check className="w-4 h-4 mt-1 shrink-0 text-[#FF6E00]" />
-              <p className="text-white/80 text-sm leading-relaxed">
-                {feature}
-              </p>
-            </div>
-          ))}
-        </div>
-
-        <Link
-          href="/contact"
-          className="inline-flex items-center gap-3 bg-black text-white text-base font-medium pl-8 pr-2 py-2 rounded-full hover:bg-[#FF6E00] transition-colors duration-200"
+        {/* Track 2 - Small Business */}
+        <motion.div
+          id="small-business"
+          custom={3}
+          initial="hidden"
+          animate="visible"
+          variants={revealVariants}
+          className="scroll-mt-32 lg:row-span-3 lg:grid lg:grid-rows-subgrid lg:border-l lg:border-black/10 lg:pl-10"
         >
-          Start Free
-          <span className="bg-white rounded-full p-2">
-            <ArrowRight className="w-5 h-5 text-black" />
-          </span>
-        </Link>
-      </motion.div>
-
-      {/* Track 2 - Small Business */}
-      <motion.div
-        id="small-business"
-        custom={3}
-        initial="hidden"
-        animate="visible"
-        variants={revealVariants}
-        className="scroll-mt-32 pt-16 border-t border-black/10"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-start mb-10">
-          <div>
-            <p className="text-black/60 text-sm mb-2">For Small Business</p>
+          <div className="mb-8">
+            <p className="flex items-center gap-2.5 text-[#FF6E00] text-sm font-medium uppercase tracking-[0.15em] mb-3">
+              <span aria-hidden="true" className="h-px w-6 bg-[#FF6E00]" />
+              For Small Business
+            </p>
             <h2
-              className="text-black text-4xl md:text-5xl font-medium leading-tight"
+              className="text-black text-3xl md:text-4xl font-medium leading-tight mb-4"
               style={{ letterSpacing: "-0.02em" }}
             >
-              AI visibility, done for you.
+              <span className="text-[#FF6E00]">AI visibility</span>, done for
+              you.
             </h2>
+            <p className="text-black/70 text-lg leading-relaxed">
+              Most small businesses don&apos;t have the time or the specialist
+              knowledge to optimize for{" "}
+              <strong className="font-semibold text-xl text-black">
+                AI search
+              </strong>
+              , and they shouldn&apos;t have to. Our team does it for them, so
+              you show up in{" "}
+              <span className="font-semibold text-xl underline decoration-2 underline-offset-4 decoration-black">
+                the recommendations they trust
+              </span>
+              .
+            </p>
           </div>
-          <p className="text-black/70 text-lg leading-relaxed md:pt-3">
-            Most small businesses don&apos;t have the time or the specialist
-            knowledge to optimize for{" "}
-            <strong className="font-semibold text-xl text-black">
-              AI search
-            </strong>
-            , and they shouldn&apos;t have to. Our team does it for them,
-            using the same platform that powers our dashboard, so you show up
-            in the AI answers your customers are already asking, from the
-            questions they type into ChatGPT to{" "}
-            <span className="font-semibold text-xl underline decoration-2 underline-offset-4 decoration-black">
-              the recommendations they trust
+
+          <div className="mb-8">
+            <FeatureGrid features={smallBusinessFeatures} columns={2} />
+          </div>
+
+          <Link
+            href="/contact"
+            className="inline-flex w-fit items-center gap-3 self-start bg-black text-white text-base font-medium pl-8 pr-2 py-2 rounded-full hover:bg-[#FF6E00] transition-colors duration-200"
+          >
+            Get a Free Audit
+            <span className="bg-white rounded-full p-2">
+              <ArrowRight className="w-5 h-5 text-black" />
             </span>
-            .
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
-          {smallBusinessFeatures.map((feature) => (
-            <div
-              key={feature}
-              className="rounded-2xl bg-[#FF6E00] p-6 flex items-start gap-3"
-            >
-              <Check className="w-4 h-4 mt-1 shrink-0 text-white" />
-              <p className="text-white/80 text-sm leading-relaxed">
-                {feature}
-              </p>
-            </div>
-          ))}
-        </div>
-
-        <Link
-          href="/contact"
-          className="inline-flex items-center gap-3 bg-black text-white text-base font-medium pl-8 pr-2 py-2 rounded-full hover:bg-[#FF6E00] transition-colors duration-200"
-        >
-          Get a Free Audit
-          <span className="bg-white rounded-full p-2">
-            <ArrowRight className="w-5 h-5 text-black" />
-          </span>
-        </Link>
-      </motion.div>
+          </Link>
+        </motion.div>
+      </div>
     </PageShell>
   );
 }
