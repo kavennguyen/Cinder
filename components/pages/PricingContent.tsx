@@ -118,8 +118,9 @@ export default function PricingContent() {
           initial="hidden"
           animate="visible"
           variants={revealVariants}
-          className="text-black/60 text-sm mb-2"
+          className="flex items-center gap-2.5 text-[#FF6E00] text-sm font-medium uppercase tracking-[0.15em] mb-3"
         >
+          <span aria-hidden="true" className="h-px w-6 bg-[#FF6E00]" />
           Plans
         </motion.p>
         <motion.h1
@@ -127,10 +128,11 @@ export default function PricingContent() {
           initial="hidden"
           animate="visible"
           variants={revealVariants}
-          className="text-black text-4xl md:text-6xl font-medium leading-tight mb-4"
+          className="text-black text-4xl md:text-6xl font-bold leading-tight mb-4"
           style={{ letterSpacing: "-0.03em" }}
         >
-          One platform. Three ways in.
+          One platform.{" "}
+          <span className="text-[#FF6E00]">Three ways in.</span>
         </motion.h1>
         <motion.p
           custom={2}

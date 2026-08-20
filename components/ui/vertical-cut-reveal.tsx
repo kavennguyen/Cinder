@@ -2,6 +2,7 @@
 
 import {
   forwardRef,
+  isValidElement,
   useCallback,
   useEffect,
   useImperativeHandle,
@@ -48,6 +49,7 @@ export interface VerticalCutRevealRef {
 interface WordObject {
   characters: string[];
   needsSpace: boolean;
+  className?: string;
 }
 
 const VerticalCutReveal = forwardRef<VerticalCutRevealRef, TextProps>(
@@ -70,8 +72,44 @@ const VerticalCutReveal = forwardRef<VerticalCutRevealRef, TextProps>(
     ref,
   ) => {
     const containerRef = useRef<HTMLSpanElement>(null);
-    const text =
-      typeof children === "string" ? children : children?.toString() || "";
+
+    /**
+     * Flatten children into runs of text tagged with the className of the
+     * element they came from, so inline accent spans (e.g. an orange
+     * highlight) survive the split instead of being stringified away.
+     */
+    const runs = useMemo(() => {
+      const acc: { text: string; className?: string }[] = [];
+      const walk = (node: ReactNode, className?: string) => {
+        if (node === null || node === undefined || typeof node === "boolean") return;
+        if (typeof node === "string" || typeof node === "number") {
+          acc.push({ text: String(node), className });
+          return;
+        }
+        if (Array.isArray(node)) {
+          node.forEach((n) => walk(n, className));
+          return;
+        }
+        if (isValidElement(node)) {
+          const props = node.props as { className?: string; children?: ReactNode };
+          walk(props.children, props.className ?? className);
+        }
+      };
+      walk(children);
+      return acc;
+    }, [children]);
+
+    const text = runs.map((r) => r.text).join("");
+
+    /** className for each character position, so words keep their accent. */
+    const classAt = useMemo(() => {
+      const out: (string | undefined)[] = [];
+      runs.forEach((r) => {
+        for (let i = 0; i < r.text.length; i++) out.push(r.className);
+      });
+      return out;
+    }, [runs]);
+
     const [isAnimating, setIsAnimating] = useState(false);
 
     // The hidden state parks each word outside a clipped box, so text that
@@ -155,13 +193,25 @@ const VerticalCutReveal = forwardRef<VerticalCutRevealRef, TextProps>(
       }),
     };
 
-    const words: WordObject[] =
-      splitBy === "characters"
-        ? (elements as WordObject[])
-        : (elements as string[]).map((el, i) => ({
-            characters: [el],
-            needsSpace: i !== elements.length - 1,
-          }));
+    // Tag each word with the className covering its first character, so an
+    // accent span inside the heading keeps its colour after splitting.
+    const words: WordObject[] = useMemo(() => {
+      const base: WordObject[] =
+        splitBy === "characters"
+          ? (elements as WordObject[])
+          : (elements as string[]).map((el, i) => ({
+              characters: [el],
+              needsSpace: i !== elements.length - 1,
+            }));
+
+      let offset = 0;
+      return base.map((w) => {
+        const len = w.characters.join("").length;
+        const className = classAt[offset];
+        offset += len + (w.needsSpace ? 1 : 0);
+        return { ...w, className };
+      });
+    }, [elements, splitBy, classAt]);
 
     return (
       <span
@@ -184,7 +234,7 @@ const VerticalCutReveal = forwardRef<VerticalCutRevealRef, TextProps>(
             <span
               key={wordIndex}
               aria-hidden="true"
-              className={cx("inline-flex overflow-hidden", wordLevelClassName)}
+              className={cx("inline-flex overflow-hidden", wordObj.className, wordLevelClassName)}
             >
               {wordObj.characters.map((char, charIndex) => (
                 <span

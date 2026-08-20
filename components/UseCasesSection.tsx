@@ -11,7 +11,10 @@ export default function UseCasesSection() {
       <div className="max-w-[88rem] mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
         {/* Left column */}
         <div className="md:pr-12 md:pt-2">
-          <p className="text-black/60 text-sm mb-2">Cinder in Practice</p>
+          <p className="flex items-center gap-2.5 text-[#FF6E00] text-sm font-medium uppercase tracking-[0.15em] mb-3">
+            <span aria-hidden="true" className="h-px w-6 bg-[#FF6E00]" />
+            Cinder in Practice
+          </p>
           <h2
             className="text-black text-4xl md:text-5xl font-medium leading-tight mb-6"
             style={{ letterSpacing: "-0.02em" }}
@@ -23,7 +26,7 @@ export default function UseCasesSection() {
             <strong className="font-semibold text-lg text-black">AI visibility</strong>{" "}
             for brands, agencies, and enterprise marketing teams across
             Canada who need to be{" "}
-            <span className="font-semibold text-lg underline decoration-2 underline-offset-4 decoration-black">
+            <span className="font-semibold text-lg text-[#FF6E00] underline decoration-2 underline-offset-4 decoration-[#FF6E00]">
               found, and trusted
             </span>
             , inside AI generated answers.

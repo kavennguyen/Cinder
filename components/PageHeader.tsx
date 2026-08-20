@@ -20,9 +20,12 @@ export default function PageHeader({ eyebrow, title, description }: PageHeaderPr
         animate="visible"
         variants={revealVariants}
       >
-        <p className="text-black/60 text-sm mb-2">{eyebrow}</p>
+        <p className="flex items-center gap-2.5 text-[#FF6E00] text-sm font-medium uppercase tracking-[0.15em] mb-3">
+          <span aria-hidden="true" className="h-px w-6 bg-[#FF6E00]" />
+          {eyebrow}
+        </p>
         <h1
-          className="text-black text-4xl md:text-6xl font-medium leading-tight"
+          className="text-black text-4xl md:text-6xl font-bold leading-tight"
           style={{ letterSpacing: "-0.03em" }}
         >
           {title}

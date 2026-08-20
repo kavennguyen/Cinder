@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "motion/react";
 
 import { ImageAccordion } from "./ui/interactive-image-accordion";
+import { VerticalCutReveal } from "@/components/ui/vertical-cut-reveal";
 
 export default function HeroSection() {
   return (
@@ -16,14 +17,23 @@ export default function HeroSection() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="w-full md:w-1/2 text-center md:text-left"
           >
-            <p className="text-black/60 text-sm font-medium tracking-[0.15em] uppercase mb-4">
+            <p className="flex items-center gap-2.5 text-[#FF6E00] text-sm font-medium uppercase tracking-[0.15em] mb-4">
+              <span aria-hidden="true" className="h-px w-6 bg-[#FF6E00]" />
               The AI Visibility Platform for Canada
             </p>
             <h1
-              className="text-black text-4xl md:text-6xl font-medium leading-tight mb-6"
+              className="text-black text-4xl md:text-6xl font-bold leading-tight mb-6"
               style={{ letterSpacing: "-0.03em" }}
             >
-              Be The Answer AI Gives.
+              <VerticalCutReveal
+                splitBy="words"
+                staggerDuration={0.07}
+                staggerFrom="first"
+                reverse
+                transition={{ type: "spring", stiffness: 270, damping: 30, delay: 0.15 }}
+              >
+                Be <span className="text-[#FF6E00]">The Answer</span> AI Gives.
+              </VerticalCutReveal>
             </h1>
             <p className="text-black/60 text-lg leading-relaxed max-w-xl mx-auto md:mx-0 mb-8">
               Cinder helps Canadian brands, and the agencies behind them, earn{" "}
@@ -33,7 +43,7 @@ export default function HeroSection() {
                 ChatGPT, Perplexity, Gemini, and Copilot
               </strong>
               , turning AI answers into{" "}
-              <span className="font-semibold text-xl underline decoration-2 underline-offset-4 decoration-black">
+              <span className="font-semibold text-xl text-[#FF6E00] underline decoration-2 underline-offset-4 decoration-[#FF6E00]">
                 your next customer
               </span>
               .

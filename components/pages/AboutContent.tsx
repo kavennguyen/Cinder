@@ -7,7 +7,6 @@ import { ArrowRight, X } from "lucide-react";
 
 import PageShell from "@/components/PageShell";
 import { aiPlatforms } from "@/components/AiEngineIcons";
-import { VerticalCutReveal } from "@/components/ui/vertical-cut-reveal";
 import { revealVariants } from "@/lib/motion";
 
 const MAIN_IMAGE =
@@ -49,8 +48,8 @@ export default function AboutContent() {
           className="flex items-center justify-between mb-5"
         >
           <div className="flex items-center gap-2">
-            <span className="text-[#FF6E00] text-lg">✱</span>
-            <span className="text-black/60 text-sm font-medium tracking-[0.15em] uppercase">
+            <span aria-hidden="true" className="h-px w-6 bg-[#FF6E00]" />
+            <span className="text-[#FF6E00] text-sm font-medium tracking-[0.15em] uppercase">
               Who We Are
             </span>
           </div>
@@ -65,9 +64,21 @@ export default function AboutContent() {
           </a>
         </motion.div>
 
+        <motion.p
+          custom={1}
+          initial="hidden"
+          animate="visible"
+          variants={revealVariants}
+          className="text-black text-4xl md:text-6xl font-bold leading-tight mb-8 max-w-4xl"
+          style={{ letterSpacing: "-0.03em" }}
+        >
+          A homegrown startup in the{" "}
+          <span className="text-[#FF6E00]">heart of Toronto</span>.
+        </motion.p>
+
         {/* Hero image */}
         <motion.img
-          custom={1}
+          custom={2}
           initial="hidden"
           animate="visible"
           variants={revealVariants}
@@ -78,7 +89,7 @@ export default function AboutContent() {
 
         {/* Stats */}
         <motion.div
-          custom={2}
+          custom={3}
           initial="hidden"
           animate="visible"
           variants={revealVariants}
@@ -120,27 +131,14 @@ export default function AboutContent() {
         <div className="grid md:grid-cols-3 gap-10 md:gap-8 mb-16">
           <div className="md:col-span-2">
             <h1
-              className="text-black text-4xl md:text-6xl font-medium leading-tight mb-8"
+              className="text-black text-4xl md:text-6xl font-bold leading-tight mb-8"
               style={{ letterSpacing: "-0.03em" }}
             >
-              <VerticalCutReveal
-                splitBy="words"
-                staggerDuration={0.08}
-                staggerFrom="first"
-                reverse
-                transition={{
-                  type: "spring",
-                  stiffness: 250,
-                  damping: 30,
-                  delay: 0.3,
-                }}
-              >
-                The future will be spoken by you.
-              </VerticalCutReveal>
+              The future will be spoken by you.
             </h1>
 
             <motion.div
-              custom={3}
+              custom={4}
               initial="hidden"
               animate="visible"
               variants={revealVariants}
@@ -157,7 +155,7 @@ export default function AboutContent() {
               </p>
               <p className="text-black/70 text-lg md:text-xl leading-relaxed">
                 Cinder exists to make sure your name is{" "}
-                <span className="font-semibold text-xl md:text-2xl underline decoration-2 underline-offset-4 decoration-black">
+                <span className="font-semibold text-xl md:text-2xl text-[#FF6E00] underline decoration-2 underline-offset-4 decoration-[#FF6E00]">
                   the one it gives
                 </span>
                 . We measure where you stand across the answer engines, then do
@@ -167,7 +165,7 @@ export default function AboutContent() {
           </div>
 
           <motion.div
-            custom={4}
+            custom={5}
             initial="hidden"
             animate="visible"
             variants={revealVariants}
@@ -192,7 +190,7 @@ export default function AboutContent() {
 
         {/* Engines */}
         <motion.div
-          custom={5}
+          custom={6}
           initial="hidden"
           animate="visible"
           variants={revealVariants}
@@ -220,7 +218,7 @@ export default function AboutContent() {
 
         {/* Values */}
         <motion.div
-          custom={6}
+          custom={7}
           initial="hidden"
           animate="visible"
           variants={revealVariants}

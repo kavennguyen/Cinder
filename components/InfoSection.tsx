@@ -15,7 +15,7 @@ export default function InfoSection() {
               className="text-black text-4xl md:text-5xl font-medium leading-tight mb-8"
               style={{ letterSpacing: "-0.03em" }}
             >
-              Meet Cinder.
+              Meet <span className="text-[#FF6E00]">Cinder</span>.
             </h2>
             <Link
               href="/services"
@@ -39,7 +39,7 @@ export default function InfoSection() {
               </strong>{" "}
               for agencies and small businesses dedicated to optimizing your
               online presence. One engine,{" "}
-              <span className="font-semibold text-3xl md:text-4xl underline decoration-2 underline-offset-4 decoration-black">
+              <span className="font-semibold text-3xl md:text-4xl text-[#FF6E00] underline decoration-2 underline-offset-4 decoration-[#FF6E00]">
                 two ways to get named
               </span>
               .

@@ -161,7 +161,7 @@ export default function CaseStudiesContent() {
           <>
             What a Cinder engagement looks like end to end: what we found, what
             we changed, and{" "}
-            <span className="font-semibold text-xl md:text-2xl underline decoration-2 underline-offset-4 decoration-black">
+            <span className="font-semibold text-xl md:text-2xl text-[#FF6E00] underline decoration-2 underline-offset-4 decoration-[#FF6E00]">
               what moved as a result
             </span>
             .

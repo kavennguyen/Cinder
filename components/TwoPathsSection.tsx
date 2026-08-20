@@ -43,13 +43,16 @@ export default function TwoPathsSection() {
   return (
     <section className="bg-white px-6 py-24">
       <div className="max-w-[88rem] mx-auto">
-        <p className="text-black/60 text-sm mb-2">One Engine, Two Ways In</p>
+        <p className="flex items-center gap-2.5 text-[#FF6E00] text-sm font-medium uppercase tracking-[0.15em] mb-3">
+          <span aria-hidden="true" className="h-px w-6 bg-[#FF6E00]" />
+          One Engine, Two Ways In
+        </p>
         <h2
           className="text-black text-4xl md:text-5xl font-medium leading-tight mb-16 max-w-2xl"
           style={{ letterSpacing: "-0.03em" }}
         >
           However you want to win{" "}
-          <strong className="font-bold text-5xl md:text-6xl">AI search</strong>, we have a way in.
+          <strong className="font-bold text-5xl md:text-6xl text-[#FF6E00]">AI search</strong>, we have a way in.
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

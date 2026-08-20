@@ -155,7 +155,7 @@ export default function ServicesContent() {
             What We Do
           </p>
           <h1
-            className="text-black text-4xl md:text-6xl font-medium leading-tight"
+            className="text-black text-4xl md:text-6xl font-bold leading-tight"
             style={{ letterSpacing: "-0.03em" }}
           >
             The tools to see it.
@@ -169,7 +169,7 @@ export default function ServicesContent() {
             AI visibility platform
           </strong>{" "}
           for the age of answer engines. However you want to win{" "}
-          <span className="font-semibold text-xl md:text-2xl underline decoration-2 underline-offset-4 decoration-black">
+          <span className="font-semibold text-xl md:text-2xl text-[#FF6E00] underline decoration-2 underline-offset-4 decoration-[#FF6E00]">
             AI search
           </span>
           , we have a way in: a dashboard for agencies, and a done for you
@@ -304,7 +304,7 @@ export default function ServicesContent() {
               as a service without building the machinery themselves. What used
               to take scattered tools, manual prompting, and guesswork becomes
               one{" "}
-              <span className="font-semibold text-xl underline decoration-2 underline-offset-4 decoration-black">
+              <span className="font-semibold text-xl text-[#FF6E00] underline decoration-2 underline-offset-4 decoration-[#FF6E00]">
                 clean, repeatable workflow
               </span>
               .
@@ -355,7 +355,7 @@ export default function ServicesContent() {
               </strong>
               , and they shouldn&apos;t have to. Our team does it for them, so
               you show up in{" "}
-              <span className="font-semibold text-xl underline decoration-2 underline-offset-4 decoration-black">
+              <span className="font-semibold text-xl text-[#FF6E00] underline decoration-2 underline-offset-4 decoration-[#FF6E00]">
                 the recommendations they trust
               </span>
               .
