@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import TwoPathsSection from "@/components/TwoPathsSection";
-import InfoSection from "@/components/InfoSection";
+import ValueCardsSection from "@/components/ValueCardsSection";
 import BackedBySection from "@/components/BackedBySection";
-import UseCasesSection from "@/components/UseCasesSection";
+import ProcessSection from "@/components/ProcessSection";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -23,8 +23,8 @@ export default function Home() {
       </div>
       <BackedBySection />
       <TwoPathsSection />
-      <InfoSection />
-      <UseCasesSection />
+      <ProcessSection />
+      <ValueCardsSection />
       <Footer />
     </div>
   );
