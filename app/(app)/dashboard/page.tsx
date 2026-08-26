@@ -1,6 +1,4 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowRight } from "lucide-react";
 
 import { getUserOrg, isSupabaseConfiguredServer } from "@/lib/org";
 import { createClient } from "@/lib/supabase/server";
@@ -9,27 +7,31 @@ import {
   getVisibilityHistory,
   getVisibilitySnapshot,
 } from "@/lib/visibility";
+import PageHeading from "@/components/dashboard/PageHeading";
+import Reveal from "@/components/dashboard/Reveal";
+import ScoreHero, { type OverviewState } from "@/components/dashboard/ScoreHero";
+import OverviewChecklist, {
+  type ChecklistStep,
+} from "@/components/dashboard/OverviewChecklist";
+import WeekSummary from "@/components/dashboard/WeekSummary";
 import VisibilityChart from "@/components/dashboard/VisibilityChart";
 import ShareOfVoiceChart from "@/components/dashboard/ShareOfVoiceChart";
-
-const PLATFORM_LABELS: Record<string, string> = {
-  chatgpt: "ChatGPT",
-  perplexity: "Perplexity",
-  gemini: "Gemini",
-  ai_overviews: "AI Overviews",
-};
+import Stat from "@/components/dashboard/ui/Stat";
+import { Card } from "@/components/dashboard/ui/Card";
+import {
+  fmtDate,
+  historySpanDays,
+  weekOverWeekDelta,
+} from "@/components/dashboard/rolling";
 
 export default async function DashboardPage() {
   if (!isSupabaseConfiguredServer()) {
     return (
       <div className="max-w-xl">
-        <h1 className="text-black text-3xl font-medium mb-4">
-          Supabase not configured
-        </h1>
-        <p className="text-black/60 text-base leading-relaxed">
+        <PageHeading eyebrow="Setup" title="Supabase not configured">
           Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to
           .env.local, then restart the dev server.
-        </p>
+        </PageHeading>
       </div>
     );
   }
@@ -38,128 +40,156 @@ export default async function DashboardPage() {
   if (!org) redirect("/dashboard/onboarding");
 
   const supabase = await createClient();
+  const weekAgo = new Date();
+  weekAgo.setDate(weekAgo.getDate() - 7);
 
-  const [promptsRes, brandsRes, changesRes, snapshot] = await Promise.all([
-    supabase
-      .from("tracked_prompts")
-      .select("id", { count: "exact", head: true })
-      .eq("org_id", org.orgId),
-    supabase
-      .from("brands")
-      .select("id", { count: "exact", head: true })
-      .eq("org_id", org.orgId)
-      .eq("is_competitor", true),
-    supabase
-      .from("changes")
-      .select("id", { count: "exact", head: true })
-      .eq("org_id", org.orgId),
-    getVisibilitySnapshot(org.orgId),
-  ]);
+  const [promptsRes, competitorsRes, ownBrandRes, changesRes, changesWeekRes, snapshot] =
+    await Promise.all([
+      supabase
+        .from("tracked_prompts")
+        .select("id", { count: "exact", head: true })
+        .eq("org_id", org.orgId),
+      supabase
+        .from("brands")
+        .select("id", { count: "exact", head: true })
+        .eq("org_id", org.orgId)
+        .eq("is_competitor", true),
+      supabase
+        .from("brands")
+        .select("id", { count: "exact", head: true })
+        .eq("org_id", org.orgId)
+        .eq("is_competitor", false),
+      supabase
+        .from("changes")
+        .select("id", { count: "exact", head: true })
+        .eq("org_id", org.orgId),
+      supabase
+        .from("changes")
+        .select("id", { count: "exact", head: true })
+        .eq("org_id", org.orgId)
+        .gte("changed_at", weekAgo.toISOString()),
+      getVisibilitySnapshot(org.orgId),
+    ]);
 
   const [history, shareOfVoice] = await Promise.all([
     getVisibilityHistory(org.orgId),
     getShareOfVoice(org.orgId),
   ]);
 
-  const cards = [
+  const promptCount = promptsRes.count ?? 0;
+  const competitorCount = competitorsRes.count ?? 0;
+  const ownBrandCount = ownBrandRes.count ?? 0;
+  const changeCount = changesRes.count ?? 0;
+  const changesThisWeek = changesWeekRes.count ?? 0;
+
+  const hasRuns = snapshot.scorePct !== null;
+  const state: OverviewState =
+    hasRuns ? "live" : promptCount > 0 ? "armed" : "fresh";
+
+  const measurements = snapshot.byPlatform.reduce((sum, p) => sum + p.total, 0);
+  const latestDate = history.length > 0 ? fmtDate(history[history.length - 1].date) : null;
+  const delta = weekOverWeekDelta(history);
+  const spanDays = historySpanDays(history);
+
+  const steps: ChecklistStep[] = [
     {
-      label: "AI Visibility Score",
-      value: snapshot.scorePct !== null ? `${snapshot.scorePct}%` : "—",
-      href: "/dashboard/prompts",
+      label: "Add your brand",
+      done: ownBrandCount > 0 ? "Your brand is being matched in answers" : null,
+      todo: "Cinder needs a brand to look for",
+      href: "/dashboard/brands",
+      cta: "Add",
     },
     {
-      label: "Tracked Prompts",
-      value: `${promptsRes.count ?? 0}${org.promptLimit ? ` / ${org.promptLimit}` : ""}`,
+      label: "Add tracked prompts",
+      done: promptCount > 0 ? `${promptCount} being tracked` : null,
+      todo: "The questions your customers ask AI",
       href: "/dashboard/prompts",
+      cta: "Add",
     },
-    { label: "Competitors Tracked", value: `${brandsRes.count ?? 0}`, href: null },
-    { label: "Changes Logged", value: `${changesRes.count ?? 0}`, href: null },
+    {
+      label: "Run them for the first time",
+      done: hasRuns ? `Scored ${snapshot.scorePct}% across ${measurements} runs` : null,
+      todo: "Ask every engine and score the answers",
+      href: "/dashboard/prompts",
+      cta: "Run",
+    },
+    {
+      label: "Log what you change",
+      done: changeCount > 0 ? `${changeCount} change${changeCount === 1 ? "" : "s"} logged` : null,
+      todo: "So you can tie what you did to what moved",
+      href: "/dashboard/changes",
+      cta: "Log",
+    },
   ];
 
   return (
-    <div className="max-w-5xl">
-      <p className="text-black/60 text-sm mb-2">Overview</p>
-      <h1
-        className="text-black text-3xl md:text-5xl font-medium leading-tight mb-4"
-        style={{ letterSpacing: "-0.03em" }}
-      >
-        {org.orgName}
-      </h1>
-      <p className="text-black/60 text-base leading-relaxed max-w-xl mb-12">
-        {org.planId
-          ? `On the ${org.planId} plan. `
-          : ""}
-        Add the prompts your customers ask AI, and Cinder will start
-        measuring where you show up.
-      </p>
+    <>
+      <PageHeading
+        eyebrow={org.planId ? `Overview · ${org.planId} plan` : "Overview"}
+        title={org.orgName}
+        size="lg"
+      />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-        {cards.map((card) => (
-          <div
-            key={card.label}
-            className="rounded-2xl border border-black/10 p-6"
-          >
-            <p className="text-black/60 text-sm mb-2">{card.label}</p>
-            <p
-              className="text-black text-4xl font-medium"
-              style={{ letterSpacing: "-0.02em" }}
-            >
-              {card.value}
-            </p>
-            {card.href && (
-              <Link
-                href={card.href}
-                className="inline-flex items-center gap-1.5 text-black/60 text-sm mt-3 hover:text-[#8A3220] transition-colors duration-200"
-              >
-                Manage <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
+      <div className="flex flex-col gap-4">
+        <Reveal index={0}>
+          <ScoreHero
+            state={state}
+            orgName={org.orgName}
+            scorePct={snapshot.scorePct}
+            promptCount={promptCount}
+            platforms={snapshot.byPlatform}
+            measurements={measurements}
+            latestDate={latestDate}
+            delta={delta}
+            spanDays={spanDays}
+          />
+        </Reveal>
+
+        <Reveal index={1} className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-2">
+            {state === "live" ? (
+              <WeekSummary
+                platforms={snapshot.byPlatform}
+                shareOfVoice={shareOfVoice}
+                delta={delta}
+                changesThisWeek={changesThisWeek}
+                hasChanges={changeCount > 0}
+              />
+            ) : (
+              <OverviewChecklist steps={steps} />
             )}
           </div>
-        ))}
-      </div>
 
-      {snapshot.byPlatform.length > 0 && (
-        <div className="rounded-2xl border border-black/10 p-6 mb-10">
-          <p className="text-black/60 text-sm mb-4">Visibility by engine</p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {snapshot.byPlatform.map((p) => (
-              <div key={p.platform}>
-                <p className="text-black/50 text-xs font-medium uppercase tracking-wide mb-1">
-                  {PLATFORM_LABELS[p.platform] ?? p.platform}
-                </p>
-                <p
-                  className="text-black text-3xl font-medium"
-                  style={{ letterSpacing: "-0.02em" }}
-                >
-                  {p.scorePct !== null ? `${p.scorePct}%` : "—"}
-                </p>
-                <p className="text-black/40 text-xs mt-1">
-                  {p.mentioned} of {p.total} prompt
-                  {p.total === 1 ? "" : "s"} mention you
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+          <Card className="px-5 sm:px-6 py-2">
+            <Stat
+              label="Tracked prompts"
+              value={`${promptCount}${org.promptLimit ? ` / ${org.promptLimit}` : ""}`}
+              href="/dashboard/prompts"
+            />
+            <Stat
+              label="Competitors"
+              value={`${competitorCount}`}
+              href="/dashboard/brands"
+            />
+            <Stat
+              label="Changes logged"
+              value={`${changeCount}`}
+              href="/dashboard/changes"
+            />
+          </Card>
+        </Reveal>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-10">
-        <VisibilityChart points={history} />
-        <ShareOfVoiceChart rows={shareOfVoice} />
+        {state !== "fresh" && (
+          <Reveal index={2} className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            <div className="lg:col-span-7 min-w-0">
+              <VisibilityChart points={history} />
+            </div>
+            <div className="lg:col-span-5 min-w-0">
+              <ShareOfVoiceChart rows={shareOfVoice} />
+            </div>
+          </Reveal>
+        )}
       </div>
-
-      <div className="rounded-2xl bg-black p-8">
-        <p className="text-white/50 text-sm mb-2">Next up</p>
-        <p className="text-white text-lg font-medium mb-1">
-          Run your prompts to get your first visibility score.
-        </p>
-        <p className="text-white/60 text-sm leading-relaxed max-w-lg">
-          Go to Tracked Prompts and hit &ldquo;Run prompts now&rdquo; — Cinder
-          will ask ChatGPT, Perplexity, and Gemini each question, detect
-          whether your brand (and your competitors) appear, and update the
-          scores above.
-        </p>
-      </div>
-    </div>
+    </>
   );
 }

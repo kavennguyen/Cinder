@@ -42,3 +42,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# internal planning docs (public repo)
+SEO-AEO-AUDIT.md
+PROMPT-FOR-KAVEN.md
+PROMPT-DASHBOARD-REDESIGN.md

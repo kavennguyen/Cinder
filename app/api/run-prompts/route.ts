@@ -26,26 +26,30 @@ export async function POST() {
     );
   }
 
-  // Cooldown: stops button-mashing from burning Gemini quota. (The daily
-  // cron uses its own route and is unaffected.)
-  const { data: lastRun } = await admin
-    .from("prompt_runs")
-    .select("ran_at")
-    .eq("org_id", org.orgId)
-    .order("ran_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+  // Cooldown: stops button-mashing from burning Gemini quota. (The scheduled
+  // cron uses its own route and is unaffected.) Cinder admins bypass it so
+  // the team can test freely — client accounts always get the guard.
+  if (!org.isAdmin) {
+    const { data: lastRun } = await admin
+      .from("prompt_runs")
+      .select("ran_at")
+      .eq("org_id", org.orgId)
+      .order("ran_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
 
-  if (
-    lastRun &&
-    Date.now() - new Date(lastRun.ran_at).getTime() < COOLDOWN_MINUTES * 60_000
-  ) {
-    return NextResponse.json(
-      {
-        error: `Prompts already ran in the last ${COOLDOWN_MINUTES} minutes. Give it a moment — daily runs also happen automatically.`,
-      },
-      { status: 429 },
-    );
+    if (
+      lastRun &&
+      Date.now() - new Date(lastRun.ran_at).getTime() <
+        COOLDOWN_MINUTES * 60_000
+    ) {
+      return NextResponse.json(
+        {
+          error: `Prompts already ran in the last ${COOLDOWN_MINUTES} minutes. Give it a moment before running again.`,
+        },
+        { status: 429 },
+      );
+    }
   }
 
   const summary = await runPromptsForOrg(admin, org.orgId);

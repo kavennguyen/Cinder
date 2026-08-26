@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Play } from "lucide-react";
 
+import { Button } from "@/components/dashboard/ui/Button";
+
 export default function RunPromptsButton() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -36,16 +38,16 @@ export default function RunPromptsButton() {
   };
 
   return (
-    <div className="flex items-center gap-4 flex-wrap">
-      <button
-        onClick={run}
-        disabled={loading}
-        className="inline-flex items-center gap-2 bg-[#8A3220] text-white text-sm font-medium px-6 py-3 rounded-full hover:opacity-90 transition-opacity disabled:opacity-50"
-      >
-        <Play className="w-4 h-4" />
-        {loading ? "Running… (can take a minute)" : "Run prompts now"}
-      </button>
-      {result && <p className="text-black/60 text-sm">{result}</p>}
+    <div className="flex items-center gap-3 flex-wrap">
+      <Button onClick={run} disabled={loading} variant="accent">
+        <Play className="w-4 h-4" aria-hidden="true" />
+        {loading ? "Running… (up to a minute)" : "Run prompts now"}
+      </Button>
+      {result && (
+        <p className="text-ink-55 text-sm max-w-xs leading-relaxed" role="status">
+          {result}
+        </p>
+      )}
     </div>
   );
 }

@@ -20,7 +20,7 @@ const BACKOFF_MS = [0, 3000, 10000, 30000];
 
 async function callGemini(
   prompt: string,
-  opts: { json?: boolean } = {},
+  opts: { json?: boolean; temperature?: number } = {},
 ): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -44,7 +44,10 @@ async function callGemini(
         generationConfig: opts.json
           ? {
               responseMimeType: "application/json",
-              temperature: 0,
+              // Extraction wants determinism (0, the default); generation
+              // callers (e.g. prompt suggestions) pass a warmer value so
+              // regenerating actually produces new output.
+              temperature: opts.temperature ?? 0,
               maxOutputTokens: 8192,
             }
           : { temperature: 0.4, maxOutputTokens: 4096 },
@@ -73,6 +76,14 @@ async function callGemini(
 /** Ask Gemini the tracked prompt the way a real user would. */
 export async function generateAnswer(promptText: string): Promise<string> {
   return callGemini(promptText);
+}
+
+/** JSON-mode call with adjustable creativity (used by prompt suggestions). */
+export async function generateJson(
+  prompt: string,
+  temperature = 0,
+): Promise<string> {
+  return callGemini(prompt, { json: true, temperature });
 }
 
 export interface BrandForExtraction {

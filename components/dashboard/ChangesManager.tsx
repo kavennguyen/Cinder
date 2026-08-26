@@ -5,6 +5,16 @@ import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/client";
+import Badge from "@/components/dashboard/ui/Badge";
+import { Button } from "@/components/dashboard/ui/Button";
+import EmptyState from "@/components/dashboard/ui/EmptyState";
+import SectionHeader from "@/components/dashboard/ui/SectionHeader";
+import {
+  inputClass,
+  noticeClass,
+  selectClass,
+  textareaClass,
+} from "@/components/dashboard/ui/Field";
 
 export interface ChangeEntry {
   id: string;
@@ -22,9 +32,6 @@ const CHANGE_TYPES = [
   { id: "technical", label: "Technical" },
   { id: "other", label: "Other" },
 ];
-
-const inputClass =
-  "w-full rounded-full border border-black/15 bg-white/40 px-5 py-3 text-black placeholder-black/40 outline-none focus:border-black/40 transition-colors duration-300";
 
 export default function ChangesManager({
   orgId,
@@ -87,14 +94,16 @@ export default function ChangesManager({
             <input
               type="text"
               value={title}
+              aria-label="What changed"
               onChange={(e) => setTitle(e.target.value)}
               placeholder="What changed? e.g. Added FAQPage schema to /pricing"
               className={`flex-1 min-w-60 ${inputClass}`}
             />
             <select
               value={type}
+              aria-label="Change type"
               onChange={(e) => setType(e.target.value)}
-              className="rounded-full border border-black/15 bg-white/40 px-5 py-3 text-black outline-none focus:border-black/40 transition-colors duration-300"
+              className={selectClass}
             >
               {CHANGE_TYPES.map((t) => (
                 <option key={t.id} value={t.id}>
@@ -106,64 +115,66 @@ export default function ChangesManager({
           <input
             type="text"
             value={url}
+            aria-label="Affected URL"
             onChange={(e) => setUrl(e.target.value)}
             placeholder="Affected URL (optional)"
             className={inputClass}
           />
           <textarea
             value={description}
+            aria-label="Details"
             onChange={(e) => setDescription(e.target.value)}
             rows={2}
             placeholder="Details (optional)"
-            className="w-full rounded-2xl border border-black/15 bg-white/40 px-5 py-3 text-black placeholder-black/40 outline-none focus:border-black/40 transition-colors duration-300 resize-none"
+            className={textareaClass}
           />
-          <button
-            type="submit"
-            disabled={loading}
-            className="inline-flex items-center gap-2 bg-black text-white text-sm font-medium px-6 py-3 rounded-full hover:bg-[#8A3220] transition-colors duration-200 disabled:opacity-50 w-fit"
-          >
-            <Plus className="w-4 h-4" />
+          <Button type="submit" disabled={loading} className="w-fit">
+            <Plus className="w-4 h-4" aria-hidden="true" />
             Log change
-          </button>
-          {error && <p className="text-[#8A3220] text-sm">{error}</p>}
+          </Button>
+          {error && <p className={noticeClass}>{error}</p>}
         </form>
       ) : (
-        <p className="rounded-2xl border border-black/10 p-5 text-black/50 text-sm leading-relaxed mb-10">
-          Changes are logged by the Cinder team as they optimize your site —
-          each one appears here and on your visibility timeline, so you can
-          see exactly what was done and what happened after.
-        </p>
+        <div className="mb-10">
+          <EmptyState title="The Cinder team logs changes here">
+            Each optimization made to your site appears in this timeline, so you
+            can see exactly what was done and what happened after.
+          </EmptyState>
+        </div>
       )}
 
-      <h2 className="text-black text-lg font-medium mb-4">Change history</h2>
+      <SectionHeader title="Change history" className="mb-4" />
       {changes.length === 0 ? (
-        <p className="text-black/50 text-sm">No changes logged yet.</p>
+        <EmptyState title="No changes logged yet">
+          Once changes are logged they line up against your visibility trend —
+          the &ldquo;what we did&rdquo; behind every move.
+        </EmptyState>
       ) : (
         <ul className="flex flex-col gap-2">
           {changes.map((c) => (
             <li
               key={c.id}
-              className="rounded-2xl border border-black/10 px-5 py-4"
+              className="rounded-2xl border border-rule bg-paper px-5 py-4"
             >
               <div className="flex items-center justify-between gap-4 flex-wrap">
-                <p className="text-black text-sm font-medium">{c.title}</p>
-                <p className="text-black/40 text-xs">
+                <p className="text-ink text-sm font-medium">{c.title}</p>
+                <p className="text-ink-45 text-xs tabular-nums">
                   {c.changed_at.slice(0, 10)}
                 </p>
               </div>
-              <div className="flex items-center gap-3 mt-1 flex-wrap">
-                <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-black/5 text-black/60">
+              <div className="flex items-center gap-3 mt-2 flex-wrap">
+                <Badge tone="muted">
                   {CHANGE_TYPES.find((t) => t.id === c.change_type)?.label ??
                     c.change_type}
-                </span>
+                </Badge>
                 {c.urls.map((u) => (
-                  <span key={u} className="text-black/50 text-xs">
+                  <span key={u} className="text-ink-45 text-xs truncate max-w-full">
                     {u}
                   </span>
                 ))}
               </div>
               {c.description && (
-                <p className="text-black/60 text-sm mt-2 leading-relaxed">
+                <p className="text-ink-55 text-sm mt-2 leading-relaxed">
                   {c.description}
                 </p>
               )}

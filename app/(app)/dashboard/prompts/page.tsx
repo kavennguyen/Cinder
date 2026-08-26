@@ -4,13 +4,19 @@ import PromptsManager, {
   type TrackedPrompt,
 } from "@/components/dashboard/PromptsManager";
 import RunPromptsButton from "@/components/dashboard/RunPromptsButton";
+import PageHeading from "@/components/dashboard/PageHeading";
 import { getUserOrg } from "@/lib/org";
 import { createClient } from "@/lib/supabase/server";
 import { getVisibilitySnapshot } from "@/lib/visibility";
 
-export default async function PromptsPage() {
+export default async function PromptsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ suggest?: string }>;
+}) {
   const org = await getUserOrg();
   if (!org) redirect("/dashboard/onboarding");
+  const { suggest } = await searchParams;
 
   const supabase = await createClient();
   const [{ data: prompts }, snapshot] = await Promise.all([
@@ -29,27 +35,21 @@ export default async function PromptsPage() {
 
   return (
     <div>
-      <p className="text-black/60 text-sm mb-2">AI Visibility</p>
-      <h1
-        className="text-black text-3xl md:text-4xl font-medium leading-tight mb-4"
-        style={{ letterSpacing: "-0.03em" }}
+      <PageHeading
+        eyebrow="AI Visibility"
+        title="Tracked Prompts"
+        action={<RunPromptsButton />}
       >
-        Tracked Prompts
-      </h1>
-      <p className="text-black/60 text-base leading-relaxed max-w-xl mb-6">
         These are the questions Cinder asks each AI engine to measure whether{" "}
         {org.orgName} shows up in the answer. ChatGPT, Perplexity, and Gemini
         run live; AI Overviews is coming soon.
-      </p>
-
-      <div className="mb-10">
-        <RunPromptsButton />
-      </div>
+      </PageHeading>
 
       <PromptsManager
         orgId={org.orgId}
         initialPrompts={withResults}
         promptLimit={org.promptLimit}
+        autoSuggest={suggest === "1"}
       />
     </div>
   );

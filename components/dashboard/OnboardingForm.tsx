@@ -6,9 +6,12 @@ import { motion } from "motion/react";
 import { ArrowRight } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/client";
-
-const inputClass =
-  "w-full rounded-full border border-black/15 bg-white/40 px-5 py-3 text-black placeholder-black/40 outline-none focus:border-black/40 transition-colors duration-300";
+import PageHeading from "@/components/dashboard/PageHeading";
+import {
+  inputClass,
+  labelClass,
+  noticeClass,
+} from "@/components/dashboard/ui/Field";
 
 export default function OnboardingForm() {
   const router = useRouter();
@@ -40,7 +43,9 @@ export default function OnboardingForm() {
       setLoading(false);
       return;
     }
-    router.push("/dashboard");
+    // Land new orgs on the prompt picker with suggestions pre-opened —
+    // the empty dashboard is where non-technical users stall.
+    router.push("/dashboard/prompts?suggest=1");
     router.refresh();
   };
 
@@ -51,21 +56,18 @@ export default function OnboardingForm() {
       transition={{ duration: 0.5 }}
       className="max-w-xl"
     >
-      <p className="text-black/60 text-sm mb-2">Welcome to Cinder</p>
-      <h1
-        className="text-black text-3xl md:text-5xl font-medium leading-tight mb-4"
-        style={{ letterSpacing: "-0.03em" }}
+      <PageHeading
+        eyebrow="Welcome to Cinder"
+        title="Set up your organization."
+        size="lg"
       >
-        Set up your organization.
-      </h1>
-      <p className="text-black/60 text-base leading-relaxed mb-10">
-        Tell us whose AI visibility we&apos;re tracking. You can add more
-        brands and competitors later.
-      </p>
+        Tell us whose AI visibility we&apos;re tracking. You can add more brands
+        and competitors later.
+      </PageHeading>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
-          <label htmlFor="ob-org" className="block text-black/70 text-sm font-medium mb-2">
+          <label htmlFor="ob-org" className={labelClass}>
             Company / organization name
           </label>
           <input
@@ -79,9 +81,9 @@ export default function OnboardingForm() {
           />
         </div>
         <div>
-          <label htmlFor="ob-brand" className="block text-black/70 text-sm font-medium mb-2">
+          <label htmlFor="ob-brand" className={labelClass}>
             Brand name to track{" "}
-            <span className="text-black/40">(defaults to company name)</span>
+            <span className="text-ink-45 font-normal">(defaults to company name)</span>
           </label>
           <input
             id="ob-brand"
@@ -93,8 +95,8 @@ export default function OnboardingForm() {
           />
         </div>
         <div>
-          <label htmlFor="ob-domain" className="block text-black/70 text-sm font-medium mb-2">
-            Website domain <span className="text-black/40">(for citation matching)</span>
+          <label htmlFor="ob-domain" className={labelClass}>
+            Website domain <span className="text-ink-45 font-normal">(for citation matching)</span>
           </label>
           <input
             id="ob-domain"
@@ -106,8 +108,8 @@ export default function OnboardingForm() {
           />
         </div>
         <div>
-          <label htmlFor="ob-competitors" className="block text-black/70 text-sm font-medium mb-2">
-            Competitors <span className="text-black/40">(comma-separated)</span>
+          <label htmlFor="ob-competitors" className={labelClass}>
+            Competitors <span className="text-ink-45 font-normal">(comma-separated)</span>
           </label>
           <input
             id="ob-competitors"
@@ -119,18 +121,16 @@ export default function OnboardingForm() {
           />
         </div>
 
-        {error && (
-          <p className="text-[#8A3220] text-sm leading-relaxed">{error}</p>
-        )}
+        {error && <p className={`${noticeClass} leading-relaxed`}>{error}</p>}
 
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex items-center justify-center gap-3 bg-black text-white text-base font-medium pl-8 pr-2 py-2 rounded-full hover:bg-[#8A3220] transition-colors duration-200 w-fit mt-2 disabled:opacity-60"
+          className="inline-flex items-center justify-center gap-3 bg-ink text-paper text-base font-medium pl-8 pr-2 py-2 rounded-full hover:bg-ember transition-colors duration-200 w-fit mt-2 disabled:opacity-60 focus-ring"
         >
           {loading ? "Creating…" : "Create Organization"}
-          <span className="bg-white rounded-full p-2">
-            <ArrowRight className="w-5 h-5 text-black" />
+          <span className="bg-paper rounded-full p-2">
+            <ArrowRight className="w-5 h-5 text-ink" aria-hidden="true" />
           </span>
         </button>
       </form>

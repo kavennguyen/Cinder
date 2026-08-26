@@ -6,6 +6,8 @@ import RunHistory, {
   type RunEntry,
   type RunMention,
 } from "@/components/dashboard/RunHistory";
+import PageHeading from "@/components/dashboard/PageHeading";
+import SectionHeader from "@/components/dashboard/ui/SectionHeader";
 import { getUserOrg } from "@/lib/org";
 import { createClient } from "@/lib/supabase/server";
 
@@ -89,25 +91,23 @@ export default async function PromptDetailPage({
     <div className="max-w-3xl">
       <Link
         href="/dashboard/prompts"
-        className="inline-flex items-center gap-2 text-black/50 text-sm mb-6 hover:text-black transition-colors duration-200"
+        className="inline-flex items-center gap-2 font-ui text-ink-45 text-sm mb-6 hover:text-ember transition-colors duration-200 focus-ring rounded-sm w-fit"
       >
-        <ArrowLeft className="w-4 h-4" />
+        <ArrowLeft className="w-4 h-4" aria-hidden="true" />
         All prompts
       </Link>
 
-      <p className="text-black/60 text-sm mb-2">Prompt detail</p>
-      <h1
-        className="text-black text-2xl md:text-3xl font-medium leading-snug mb-3"
-        style={{ letterSpacing: "-0.02em" }}
+      <PageHeading
+        eyebrow="Prompt detail"
+        title={<>&ldquo;{prompt.text}&rdquo;</>}
       >
-        &ldquo;{prompt.text}&rdquo;
-      </h1>
-      <p className="text-black/50 text-sm mb-10">
-        Platforms: {prompt.platforms.join(", ")} · {runs.length} run
-        {runs.length === 1 ? "" : "s"} recorded
-      </p>
+        <span className="tabular-nums">
+          {prompt.platforms.join(", ")} · {runs.length} run
+          {runs.length === 1 ? "" : "s"} recorded
+        </span>
+      </PageHeading>
 
-      <h2 className="text-black text-lg font-medium mb-4">Run history</h2>
+      <SectionHeader title="Run history" className="mb-4" />
       <RunHistory runs={runs} />
     </div>
   );

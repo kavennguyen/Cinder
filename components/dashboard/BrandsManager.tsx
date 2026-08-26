@@ -5,6 +5,14 @@ import { useRouter } from "next/navigation";
 import { Plus, Trash2 } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/client";
+import { Button } from "@/components/dashboard/ui/Button";
+import EmptyState from "@/components/dashboard/ui/EmptyState";
+import SectionHeader from "@/components/dashboard/ui/SectionHeader";
+import {
+  inputClass,
+  labelClass,
+  noticeClass,
+} from "@/components/dashboard/ui/Field";
 
 export interface Brand {
   id: string;
@@ -13,9 +21,6 @@ export interface Brand {
   domains: string[];
   is_competitor: boolean;
 }
-
-const inputClass =
-  "rounded-full border border-black/15 bg-white/40 px-5 py-3 text-black placeholder-black/40 outline-none focus:border-black/40 transition-colors duration-300";
 
 export default function BrandsManager({
   orgId,
@@ -88,7 +93,7 @@ export default function BrandsManager({
   return (
     <div className="max-w-3xl">
       <form onSubmit={addBrand} className="mb-10">
-        <label htmlFor="brand-name" className="block text-black/70 text-sm font-medium mb-2">
+        <label htmlFor="brand-name" className={labelClass}>
           Add a brand
         </label>
         <div className="flex gap-2 flex-wrap">
@@ -108,33 +113,30 @@ export default function BrandsManager({
             placeholder="domain.com (optional)"
             className={`flex-1 min-w-40 ${inputClass}`}
           />
-          <button
-            type="submit"
-            disabled={loading}
-            className="inline-flex items-center gap-2 bg-black text-white text-sm font-medium px-6 py-3 rounded-full hover:bg-[#8A3220] transition-colors duration-200 disabled:opacity-50"
-          >
-            <Plus className="w-4 h-4" />
+          <Button type="submit" disabled={loading}>
+            <Plus className="w-4 h-4" aria-hidden="true" />
             Add
-          </button>
+          </Button>
         </div>
-        <label className="inline-flex items-center gap-2 mt-3 text-sm text-black/70 cursor-pointer">
+        <label className="inline-flex items-center gap-2 mt-3 text-sm text-ink-70 cursor-pointer">
           <input
             type="checkbox"
             checked={isCompetitor}
             onChange={(e) => setIsCompetitor(e.target.checked)}
-            className="accent-[#8A3220]"
+            className="accent-ember focus-ring rounded-sm"
           />
           This is a competitor
         </label>
-        {error && <p className="text-[#8A3220] text-sm mt-3">{error}</p>}
+        {error && <p className={`${noticeClass} mt-3`}>{error}</p>}
       </form>
 
       <div className="mb-10">
-        <h2 className="text-black text-lg font-medium mb-4">Your brand</h2>
+        <SectionHeader title="Your brand" className="mb-4" />
         {own.length === 0 ? (
-          <p className="text-black/50 text-sm">
-            No brand set — add one and untick &ldquo;competitor&rdquo;.
-          </p>
+          <EmptyState title="No brand set yet">
+            Add your own brand above and untick &ldquo;competitor&rdquo; — it&apos;s
+            the brand your visibility score is measured on.
+          </EmptyState>
         ) : (
           <ul className="flex flex-col gap-2">
             {own.map((b) => (
@@ -144,18 +146,21 @@ export default function BrandsManager({
         )}
       </div>
 
-      <div className="flex items-baseline justify-between mb-4">
-        <h2 className="text-black text-lg font-medium">Competitors</h2>
-        <span className="text-black/50 text-sm">
-          {competitors.length}
-          {competitorLimit !== null ? ` / ${competitorLimit}` : ""}
-        </span>
-      </div>
+      <SectionHeader
+        title="Competitors"
+        className="mb-4"
+        right={
+          <span className="text-ink-45 text-sm tabular-nums">
+            {competitors.length}
+            {competitorLimit !== null ? ` / ${competitorLimit}` : ""}
+          </span>
+        }
+      />
       {competitors.length === 0 ? (
-        <p className="text-black/50 text-sm">
-          No competitors yet. Add the brands you&apos;re competing with for AI
-          visibility — share of voice is measured against them.
-        </p>
+        <EmptyState title="No competitors yet">
+          Add the brands you&apos;re up against for AI visibility — share of
+          voice is measured against them.
+        </EmptyState>
       ) : (
         <ul className="flex flex-col gap-2">
           {competitors.map((b) => (
@@ -175,11 +180,11 @@ function BrandRow({
   onDelete: (id: string) => void;
 }) {
   return (
-    <li className="rounded-2xl border border-black/10 px-5 py-4 flex items-center justify-between gap-4">
-      <div>
-        <p className="text-black text-sm font-medium">{brand.name}</p>
+    <li className="rounded-2xl border border-rule bg-paper px-5 py-4 flex items-center justify-between gap-4">
+      <div className="min-w-0">
+        <p className="text-ink text-sm font-medium truncate">{brand.name}</p>
         {brand.domains.length > 0 && (
-          <p className="text-black/50 text-xs mt-0.5">
+          <p className="text-ink-45 text-xs mt-0.5 truncate">
             {brand.domains.join(", ")}
           </p>
         )}
@@ -187,9 +192,9 @@ function BrandRow({
       <button
         onClick={() => onDelete(brand.id)}
         aria-label={`Delete brand: ${brand.name}`}
-        className="shrink-0 text-black/40 hover:text-[#8A3220] transition-colors duration-200"
+        className="shrink-0 text-ink-45 hover:text-ember transition-colors duration-200 focus-ring rounded-full p-1"
       >
-        <Trash2 className="w-4 h-4" />
+        <Trash2 className="w-4 h-4" aria-hidden="true" />
       </button>
     </li>
   );

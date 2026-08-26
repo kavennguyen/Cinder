@@ -1,10 +1,116 @@
 @import "tailwindcss";
 
+@theme {
+  /* --- Typefaces ---------------------------------------------------------
+     Deliberately NOT named --font-sans: Tailwind's default sans stack stays
+     untouched so the marketing tree can't be affected. Inter is loaded by
+     app/(app)/dashboard/layout.tsx, so --font-inter only resolves there. */
+  --font-display: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --font-ui: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* --- Ground & surfaces -------------------------------------------------
+     Lift comes from ground -> paper, never from shadows. */
+  --color-ground: #faf7f2;
+  --color-paper: #ffffff;
+  --color-wash: #f2ede6;
+  --color-rule: #e7e1d9;
+  --color-rule-strong: #d6cec4;
+  --color-grid: #eae4db;
+  --color-bar-muted: #cfc6ba;
+
+  /* --- Warm ink ramp -----------------------------------------------------
+     Opaque, so it composes identically over ground, paper and wash.
+     Contrast on ground: ink 19.7, 80 14.1, 70 11.0, 55 7.3, 45 4.9.
+     ink-45 is the floor on ground/paper; on wash the floor is ink-55. */
+  --color-ink: #000000;
+  --color-ink-80: #2b2522;
+  --color-ink-70: #3d3733;
+  --color-ink-55: #5a5149;
+  --color-ink-45: #756b63;
+
+  /* --- Brand -------------------------------------------------------------
+     ember: the only accent on light surfaces (8.21 on paper).
+     flame: emphasis on dark only (7.48 on black); never text on light. */
+  --color-ember: #8a3220;
+  --color-ember-deep: #7a2c1c;
+  --color-ember-wash: #f6ebe7;
+  --color-flame: #ff6e00;
+
+  /* --- On the black rail ------------------------------------------------- */
+  --color-rail-soft: #14110f;
+  --color-on-rail: #e8e3dd;
+  --color-on-rail-dim: #b8b0a8;
+
+  --radius-hero: 1.5rem;
+}
+
+/* Inter is declared on the dashboard root itself (next/font sets --font-inter
+   on the same element). Redeclaring --font-ui here rather than in @theme is
+   deliberate: a var() that can't resolve at :root computes to invalid, and an
+   invalid font-family silently falls back to inherit. */
+.dash-root {
+  --font-ui: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+}
+
 html,
 body {
   font-family: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
 }
 
-* {
+/* Form controls don't inherit font-family by default — this is the only job
+   the previous `* { font-family: inherit }` rule was actually doing, and
+   narrowing it lets the dashboard opt into a second typeface. */
+button,
+input,
+select,
+textarea,
+option,
+optgroup {
   font-family: inherit;
+}
+
+/* First-paint reveal. A CSS animation rather than a motion/react one: if the
+   JS animation never starts (it doesn't, reliably, in this project) a
+   motion-driven reveal leaves the whole page stuck at opacity 0. */
+@keyframes dash-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.dash-reveal {
+  animation: dash-reveal 0.35s ease-out both;
+}
+
+@utility focus-ring {
+  &:focus-visible {
+    outline: 2px solid var(--color-ember);
+    outline-offset: 2px;
+  }
+}
+
+/* Focus on the black rail — ember is too dark against black. */
+@utility focus-ring-rail {
+  &:focus-visible {
+    outline: 2px solid var(--color-flame);
+    outline-offset: 2px;
+  }
+}
+
+/* Scoped to the dashboard so marketing rendering is untouched. */
+@media (prefers-reduced-motion: reduce) {
+  .dash-root *,
+  .dash-root *::before,
+  .dash-root *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+  }
 }

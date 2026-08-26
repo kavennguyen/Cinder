@@ -38,6 +38,24 @@ export function PerplexityIcon() {
   );
 }
 
+export function AiOverviewsIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="w-5 h-5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="10.5" cy="10.5" r="6.5" />
+      <path d="m21 21-4.35-4.35" />
+      <path d="M10.5 7.2q.55 1.75 1.55 2.75t2.75 1.55q-1.75.55-2.75 1.55T10.5 15.8q-.55-1.75-1.55-2.75T6.2 11.5q1.75-.55 2.75-1.55T10.5 7.2Z" />
+    </svg>
+  );
+}
+
 export interface AiPlatform {
   name: string;
   icon: React.ReactNode;

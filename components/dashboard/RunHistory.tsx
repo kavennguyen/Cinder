@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
+import Badge from "@/components/dashboard/ui/Badge";
+import EmptyState from "@/components/dashboard/ui/EmptyState";
+
 export interface RunMention {
   brandName: string;
   isCompetitor: boolean;
@@ -36,10 +39,10 @@ export default function RunHistory({ runs }: { runs: RunEntry[] }) {
 
   if (runs.length === 0) {
     return (
-      <p className="rounded-2xl border border-black/10 p-8 text-black/50 text-sm">
-        This prompt hasn&apos;t been run yet. Hit &ldquo;Run prompts now&rdquo;
-        on the Tracked Prompts page.
-      </p>
+      <EmptyState title="Not run yet">
+        Hit &ldquo;Run prompts now&rdquo; on the Tracked Prompts page and every
+        engine&apos;s answer will be recorded here.
+      </EmptyState>
     );
   }
 
@@ -49,62 +52,60 @@ export default function RunHistory({ runs }: { runs: RunEntry[] }) {
         const isOpen = open === run.id;
         const ownMention = run.mentions.find((m) => !m.isCompetitor);
         return (
-          <li key={run.id} className="rounded-2xl border border-black/10">
+          <li key={run.id} className="rounded-2xl border border-rule bg-paper">
             <button
               onClick={() => setOpen(isOpen ? null : run.id)}
-              className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left"
+              aria-expanded={isOpen}
+              className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left focus-ring rounded-2xl"
             >
               <div className="flex items-center gap-3 flex-wrap">
-                <span className="text-black text-sm font-medium">
+                <span className="text-ink text-sm font-medium tabular-nums">
                   {fmtDateTime(run.ranAt)}
                 </span>
-                <span className="text-black/40 text-xs capitalize">
+                <span className="text-ink-45 text-xs capitalize">
                   {run.platform}
                 </span>
                 {run.status === "error" ? (
-                  <span className="text-xs font-medium px-3 py-1 rounded-full border border-[#8A3220]/40 text-[#8A3220]">
-                    Failed
-                  </span>
+                  <Badge tone="alert">Failed</Badge>
                 ) : ownMention?.mentioned ? (
-                  <span className="text-xs font-medium px-3 py-1 rounded-full bg-black text-white">
+                  <Badge tone="solid">
                     Mentioned
                     {ownMention.position ? ` · #${ownMention.position}` : ""}
-                  </span>
+                  </Badge>
                 ) : (
-                  <span className="text-xs font-medium px-3 py-1 rounded-full border border-black/15 text-black/50">
-                    Not mentioned
-                  </span>
+                  <Badge tone="outline">Not mentioned</Badge>
                 )}
               </div>
               <ChevronDown
-                className={`w-4 h-4 text-black/40 shrink-0 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+                className={`w-4 h-4 text-ink-45 shrink-0 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+                aria-hidden="true"
               />
             </button>
 
             {isOpen && (
-              <div className="px-5 pb-5 border-t border-black/5 pt-4">
+              <div className="px-5 pb-5 border-t border-rule pt-4">
                 {run.status === "error" ? (
-                  <p className="text-[#8A3220] text-sm leading-relaxed">
+                  <p className="text-ember text-sm leading-relaxed">
                     {run.error ?? "Run failed."}
                   </p>
                 ) : (
                   <>
                     {run.mentions.length > 0 && (
                       <div className="mb-4">
-                        <p className="text-black/40 text-xs font-medium uppercase tracking-wide mb-2">
+                        <p className="text-ink-45 text-xs font-medium uppercase tracking-wide mb-2">
                           Brands detected
                         </p>
                         <div className="flex flex-wrap gap-2">
                           {run.mentions.map((m) => (
-                            <span
+                            <Badge
                               key={m.brandName}
-                              className={`text-xs font-medium px-3 py-1 rounded-full ${
+                              tone={
                                 m.mentioned
                                   ? m.isCompetitor
-                                    ? "bg-black/10 text-black/70"
-                                    : "bg-[#8A3220] text-white"
-                                  : "border border-black/10 text-black/35"
-                              }`}
+                                    ? "muted"
+                                    : "accent"
+                                  : "outline"
+                              }
                             >
                               {m.brandName}
                               {m.mentioned && m.position
@@ -113,16 +114,16 @@ export default function RunHistory({ runs }: { runs: RunEntry[] }) {
                               {m.mentioned && m.sentiment
                                 ? ` · ${m.sentiment}`
                                 : ""}
-                            </span>
+                            </Badge>
                           ))}
                         </div>
                       </div>
                     )}
-                    <p className="text-black/40 text-xs font-medium uppercase tracking-wide mb-2">
+                    <p className="text-ink-45 text-xs font-medium uppercase tracking-wide mb-2">
                       Raw answer
                     </p>
-                    <div className="rounded-xl bg-black/[0.03] border border-black/5 p-4 max-h-80 overflow-y-auto">
-                      <p className="text-black/70 text-sm leading-relaxed whitespace-pre-wrap">
+                    <div className="rounded-xl bg-wash border border-rule p-4 max-h-80 overflow-y-auto">
+                      <p className="text-ink-70 text-sm leading-relaxed whitespace-pre-wrap">
                         {run.rawResponse ?? "(empty)"}
                       </p>
                     </div>

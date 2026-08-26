@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 
 import BrandsManager, { type Brand } from "@/components/dashboard/BrandsManager";
+import PageHeading from "@/components/dashboard/PageHeading";
 import { getUserOrg } from "@/lib/org";
 import { createClient } from "@/lib/supabase/server";
 
@@ -17,17 +18,10 @@ export default async function BrandsPage() {
 
   return (
     <div>
-      <p className="text-black/60 text-sm mb-2">Setup</p>
-      <h1
-        className="text-black text-3xl md:text-4xl font-medium leading-tight mb-4"
-        style={{ letterSpacing: "-0.03em" }}
-      >
-        Brands &amp; Competitors
-      </h1>
-      <p className="text-black/60 text-base leading-relaxed max-w-xl mb-10">
+      <PageHeading eyebrow="Setup" title="Brands & Competitors">
         Every brand here is checked against every AI answer. Your own brand
         drives the visibility score; competitors power share of voice.
-      </p>
+      </PageHeading>
 
       <BrandsManager
         orgId={org.orgId}

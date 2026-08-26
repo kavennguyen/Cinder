@@ -1,6 +1,17 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import { TrendingUp } from "lucide-react";
+
+import { Card, CardHeader } from "@/components/dashboard/ui/Card";
+import EmptyState from "@/components/dashboard/ui/EmptyState";
+import MetricInfo from "@/components/dashboard/ui/MetricInfo";
+import {
+  METHOD_TREND,
+  dayToIso,
+  fmtDate,
+  withRollingAverage,
+} from "@/components/dashboard/rolling";
 
 export interface ChartPoint {
   date: string; // YYYY-MM-DD
@@ -8,44 +19,67 @@ export interface ChartPoint {
   runs: number;
 }
 
-const ACCENT = "#8A3220";
-const SURFACE = "#ffffff";
-const GRID = "#ececea"; // one step off surface, hairline
-const W = 640;
-const H = 240;
-const PAD = { l: 40, r: 16, t: 12, b: 28 };
-
-function fmtDate(iso: string) {
-  const [, m, d] = iso.split("-");
-  return `${["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][Number(m)]} ${Number(d)}`;
-}
+const W = 680;
+const H = 250;
+const PAD = { l: 34, r: 14, t: 14, b: 30 };
+const INNER_W = W - PAD.l - PAD.r;
+const INNER_H = H - PAD.t - PAD.b;
 
 export default function VisibilityChart({ points }: { points: ChartPoint[] }) {
   const [hover, setHover] = useState<number | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
 
-  if (points.length === 0) {
+  const rolling = useMemo(() => withRollingAverage(points), [points]);
+
+  const geom = useMemo(() => {
+    if (rolling.length === 0) return null;
+    const days = rolling.map((p) => p.day);
+    const minDay = Math.min(...days);
+    const maxDay = Math.max(...days);
+    const span = maxDay - minDay;
+    const maxRuns = Math.max(...rolling.map((p) => p.runs), 1);
+
+    // x is a real time scale — a gap in the data must read as a gap.
+    const x = (day: number) =>
+      PAD.l + (span === 0 ? INNER_W / 2 : ((day - minDay) / span) * INNER_W);
+    const y = (score: number) => PAD.t + INNER_H - (score / 100) * INNER_H;
+
+    const avgPath = rolling
+      .map((p, i) => `${i === 0 ? "M" : "L"}${x(p.day).toFixed(1)},${y(p.avg).toFixed(1)}`)
+      .join(" ");
+    const areaPath =
+      rolling.length > 1
+        ? `${avgPath} L${x(maxDay).toFixed(1)},${(PAD.t + INNER_H).toFixed(1)} ` +
+          `L${x(minDay).toFixed(1)},${(PAD.t + INNER_H).toFixed(1)} Z`
+        : null;
+
+    // Up to five ticks spread across the calendar span, not the array.
+    const tickCount = span === 0 ? 1 : Math.min(5, span + 1);
+    const ticks =
+      tickCount === 1
+        ? [minDay]
+        : Array.from({ length: tickCount }, (_, i) =>
+            Math.round(minDay + (span * i) / (tickCount - 1)),
+          );
+
+    return { minDay, maxDay, span, maxRuns, x, y, avgPath, areaPath, ticks };
+  }, [rolling]);
+
+  if (rolling.length === 0 || !geom) {
     return (
-      <div className="rounded-2xl border border-black/10 p-8 text-black/50 text-sm leading-relaxed">
-        No visibility data yet — run your prompts and the trend will chart
-        here.
-      </div>
+      <EmptyState
+        icon={<TrendingUp className="w-5 h-5" aria-hidden="true" />}
+        title="No trend yet"
+        className="h-full"
+      >
+        Once your prompts have run, this charts your visibility day by day, with
+        a 7-day average so one noisy day doesn&apos;t read as a drop.
+      </EmptyState>
     );
   }
 
-  const innerW = W - PAD.l - PAD.r;
-  const innerH = H - PAD.t - PAD.b;
-  const x = (i: number) =>
-    PAD.l + (points.length === 1 ? innerW / 2 : (i / (points.length - 1)) * innerW);
-  const y = (score: number) => PAD.t + innerH - (score / 100) * innerH;
-
-  const linePath = points
-    .map((p, i) => `${i === 0 ? "M" : "L"}${x(i).toFixed(1)},${y(p.score).toFixed(1)}`)
-    .join(" ");
-  const areaPath =
-    points.length > 1
-      ? `${linePath} L${x(points.length - 1).toFixed(1)},${(PAD.t + innerH).toFixed(1)} L${x(0).toFixed(1)},${(PAD.t + innerH).toFixed(1)} Z`
-      : null;
+  const latest = rolling[rolling.length - 1];
+  const active = hover !== null ? rolling[hover] : null;
 
   const onMove = (e: React.PointerEvent<SVGSVGElement>) => {
     const svg = svgRef.current;
@@ -54,8 +88,8 @@ export default function VisibilityChart({ points }: { points: ChartPoint[] }) {
     const px = ((e.clientX - rect.left) / rect.width) * W;
     let nearest = 0;
     let best = Infinity;
-    points.forEach((_, i) => {
-      const d = Math.abs(x(i) - px);
+    rolling.forEach((p, i) => {
+      const d = Math.abs(geom.x(p.day) - px);
       if (d < best) {
         best = d;
         nearest = i;
@@ -64,154 +98,196 @@ export default function VisibilityChart({ points }: { points: ChartPoint[] }) {
     setHover(nearest);
   };
 
-  // x tick labels: first, last, and up to 2 in between
-  const tickIdx = new Set<number>([0, points.length - 1]);
-  if (points.length > 3) {
-    tickIdx.add(Math.round((points.length - 1) / 3));
-    tickIdx.add(Math.round(((points.length - 1) * 2) / 3));
-  }
+  // Dot radius carries the sample size, so a one-run day looks like one run.
+  const dotR = (runs: number) =>
+    1.5 + 2 * Math.sqrt(Math.min(runs, geom.maxRuns) / geom.maxRuns);
 
-  const last = points[points.length - 1];
-  const hovered = hover !== null ? points[hover] : null;
+  const tooltipLeft = active
+    ? Math.min(88, Math.max(12, (geom.x(active.day) / W) * 100))
+    : 0;
 
   return (
-    <div className="rounded-2xl border border-black/10 p-6">
-      <div className="flex items-baseline justify-between mb-4 flex-wrap gap-2">
-        <div>
-          <p className="text-black/60 text-sm">AI Visibility Score over time</p>
-          <p className="text-black/40 text-xs">
-            % of prompt runs mentioning your brand, per day
-          </p>
-        </div>
-        {hovered ? (
-          <p className="text-sm">
-            <span className="text-black font-semibold">{hovered.score}%</span>{" "}
-            <span className="text-black/50">
-              · {fmtDate(hovered.date)} · {hovered.runs} run
-              {hovered.runs === 1 ? "" : "s"}
+    <Card className="p-5 sm:p-6 h-full flex flex-col">
+      <CardHeader
+        title="Visibility over time"
+        info={<MetricInfo label="the visibility trend">{METHOD_TREND}</MetricInfo>}
+        right={
+          <span className="font-ui text-right block">
+            <span className="text-ink text-lg font-medium tabular-nums">
+              {latest.avg}%
             </span>
-          </p>
-        ) : (
-          <p className="text-sm">
-            <span className="text-black font-semibold">{last.score}%</span>{" "}
-            <span className="text-black/50">latest</span>
-          </p>
+            <span className="block text-ink-45 text-[0.6875rem]">7-day avg</span>
+          </span>
+        }
+      />
+
+      <div className="flex items-center gap-4 mt-3 mb-1 font-ui text-[0.6875rem] text-ink-45">
+        <span className="inline-flex items-center gap-1.5">
+          <span className="w-4 h-0.5 rounded-full bg-ember" aria-hidden="true" />
+          7-day average
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <span
+            className="w-1.5 h-1.5 rounded-full bg-ember/40"
+            aria-hidden="true"
+          />
+          daily · dot size = runs
+        </span>
+      </div>
+
+      <div className="relative mt-1">
+        <svg
+          ref={svgRef}
+          viewBox={`0 0 ${W} ${H}`}
+          className="w-full h-auto touch-none"
+          onPointerMove={onMove}
+          onPointerLeave={() => setHover(null)}
+          role="img"
+          aria-label={`AI visibility score by day. Latest 7-day average ${latest.avg} percent across ${rolling.length} days with runs.`}
+        >
+          {[0, 50, 100].map((v) => (
+            <g key={v}>
+              <line
+                x1={PAD.l}
+                y1={geom.y(v)}
+                x2={W - PAD.r}
+                y2={geom.y(v)}
+                stroke="var(--color-grid)"
+                strokeWidth="1"
+              />
+              <text
+                x={PAD.l - 8}
+                y={geom.y(v) + 3.5}
+                textAnchor="end"
+                fontSize="11"
+                fill="var(--color-ink-45)"
+                className="font-ui tabular-nums"
+              >
+                {v}
+              </text>
+            </g>
+          ))}
+
+          {geom.ticks.map((day, i) => (
+            <text
+              key={day}
+              x={geom.x(day)}
+              y={H - 8}
+              // Edge ticks anchor inward so the first and last dates can't clip.
+              textAnchor={
+                i === 0 ? "start" : i === geom.ticks.length - 1 ? "end" : "middle"
+              }
+              fontSize="11"
+              fill="var(--color-ink-45)"
+              className="font-ui"
+            >
+              {fmtDate(dayToIso(day))}
+            </text>
+          ))}
+
+          {geom.areaPath && (
+            <path d={geom.areaPath} fill="var(--color-ember-wash)" />
+          )}
+
+          {active && (
+            <line
+              x1={geom.x(active.day)}
+              y1={PAD.t}
+              x2={geom.x(active.day)}
+              y2={PAD.t + INNER_H}
+              stroke="var(--color-rule-strong)"
+              strokeWidth="1"
+            />
+          )}
+
+          {/* Daily scores sit behind the average, deliberately faint. */}
+          {rolling.map((p) => (
+            <circle
+              key={`d-${p.date}`}
+              cx={geom.x(p.day)}
+              cy={geom.y(p.score)}
+              r={dotR(p.runs)}
+              fill="var(--color-ember)"
+              opacity="0.35"
+            />
+          ))}
+
+          {rolling.length > 1 && (
+            <path
+              d={geom.avgPath}
+              fill="none"
+              stroke="var(--color-ember)"
+              strokeWidth="2"
+              strokeLinejoin="round"
+              strokeLinecap="round"
+            />
+          )}
+
+          {active && (
+            <circle
+              cx={geom.x(active.day)}
+              cy={geom.y(active.avg)}
+              r="5"
+              fill="var(--color-ember)"
+              stroke="var(--color-paper)"
+              strokeWidth="2"
+            />
+          )}
+        </svg>
+
+        {active && (
+          <div
+            className="pointer-events-none absolute top-0 -translate-x-1/2 rounded-xl border border-rule bg-paper px-3 py-2 font-ui shadow-none"
+            style={{ left: `${tooltipLeft}%` }}
+          >
+            <p className="text-ink text-xs font-medium">
+              {fmtDate(active.date)}
+            </p>
+            <p className="text-ink-70 text-xs tabular-nums mt-1">
+              {active.avg}% 7-day avg
+              <span className="text-ink-45">
+                {" "}
+                ({active.windowDays} day{active.windowDays === 1 ? "" : "s"})
+              </span>
+            </p>
+            <p className="text-ink-55 text-xs tabular-nums">
+              {active.score}% that day · {active.runs} run
+              {active.runs === 1 ? "" : "s"}
+            </p>
+          </div>
         )}
       </div>
 
-      <svg
-        ref={svgRef}
-        viewBox={`0 0 ${W} ${H}`}
-        className="w-full h-auto touch-none"
-        onPointerMove={onMove}
-        onPointerLeave={() => setHover(null)}
-        role="img"
-        aria-label={`AI visibility score by day, latest ${last.score} percent`}
-      >
-        {/* gridlines + y ticks */}
-        {[0, 25, 50, 75, 100].map((v) => (
-          <g key={v}>
-            <line
-              x1={PAD.l}
-              y1={y(v)}
-              x2={W - PAD.r}
-              y2={y(v)}
-              stroke={GRID}
-              strokeWidth="1"
-            />
-            <text
-              x={PAD.l - 8}
-              y={y(v) + 3}
-              textAnchor="end"
-              fontSize="10"
-              fill="rgba(0,0,0,0.45)"
-            >
-              {v}
-            </text>
-          </g>
-        ))}
-
-        {/* x tick labels */}
-        {points.map((p, i) =>
-          tickIdx.has(i) ? (
-            <text
-              key={p.date}
-              x={x(i)}
-              y={H - 8}
-              textAnchor="middle"
-              fontSize="10"
-              fill="rgba(0,0,0,0.45)"
-            >
-              {fmtDate(p.date)}
-            </text>
-          ) : null,
-        )}
-
-        {/* area wash */}
-        {areaPath && <path d={areaPath} fill={ACCENT} opacity="0.1" />}
-
-        {/* crosshair */}
-        {hovered && hover !== null && (
-          <line
-            x1={x(hover)}
-            y1={PAD.t}
-            x2={x(hover)}
-            y2={PAD.t + innerH}
-            stroke="rgba(0,0,0,0.25)"
-            strokeWidth="1"
-          />
-        )}
-
-        {/* line */}
-        {points.length > 1 && (
-          <path
-            d={linePath}
-            fill="none"
-            stroke={ACCENT}
-            strokeWidth="2"
-            strokeLinejoin="round"
-            strokeLinecap="round"
-          />
-        )}
-
-        {/* dots: 2px surface ring, r=4 */}
-        {points.map((p, i) => (
-          <circle
-            key={p.date}
-            cx={x(i)}
-            cy={y(p.score)}
-            r={hover === i ? 5 : 4}
-            fill={ACCENT}
-            stroke={SURFACE}
-            strokeWidth="2"
-          />
-        ))}
-      </svg>
-
-      {/* table view — the non-hover path to every value */}
-      <details className="mt-3">
-        <summary className="text-black/40 text-xs cursor-pointer hover:text-black/60 transition-colors">
+      <details className="mt-4 group">
+        <summary className="font-ui text-ink-45 text-xs cursor-pointer hover:text-ember transition-colors duration-200 focus-ring rounded-sm w-fit">
           View data
         </summary>
-        <table className="mt-2 text-xs text-black/70">
-          <thead>
-            <tr className="text-left text-black/40">
-              <th className="pr-6 py-1 font-medium">Date</th>
-              <th className="pr-6 py-1 font-medium">Score</th>
-              <th className="py-1 font-medium">Runs</th>
-            </tr>
-          </thead>
-          <tbody>
-            {points.map((p) => (
-              <tr key={p.date}>
-                <td className="pr-6 py-0.5">{p.date}</td>
-                <td className="pr-6 py-0.5">{p.score}%</td>
-                <td className="py-0.5">{p.runs}</td>
+        <div className="mt-3 max-h-56 overflow-y-auto">
+          <table className="w-full font-ui text-xs text-ink-70">
+            <caption className="sr-only">
+              Daily AI visibility score, 7-day average and run count
+            </caption>
+            <thead className="sticky top-0 bg-paper">
+              <tr className="text-left text-ink-45 border-b border-rule">
+                <th className="pr-4 py-1.5 font-medium">Date</th>
+                <th className="pr-4 py-1.5 font-medium">Daily</th>
+                <th className="pr-4 py-1.5 font-medium">7-day avg</th>
+                <th className="py-1.5 font-medium">Runs</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="tabular-nums">
+              {rolling.map((p) => (
+                <tr key={p.date} className="border-b border-rule last:border-0">
+                  <td className="pr-4 py-1">{p.date}</td>
+                  <td className="pr-4 py-1">{p.score}%</td>
+                  <td className="pr-4 py-1">{p.avg}%</td>
+                  <td className="py-1">{p.runs}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </details>
-    </div>
+    </Card>
   );
 }
