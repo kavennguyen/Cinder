@@ -9,9 +9,11 @@ import ProcessSection from "@/components/ProcessSection";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Cinder — The AI Visibility Platform for Canada",
+  title: {
+    absolute: "AI Visibility Tracking for Canadian Brands | Cinder",
+  },
   description:
-    "Be the answer AI gives. Cinder helps Canadian brands and agencies earn visibility inside ChatGPT, Perplexity, Gemini, and Copilot.",
+    "Be the answer AI gives. Cinder helps Canadian brands and agencies earn visibility inside ChatGPT, Perplexity and Gemini.",
 };
 
 export default function Home() {

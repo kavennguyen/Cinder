@@ -75,7 +75,7 @@ export default function Navbar() {
               href="/contact"
               className="hidden sm:inline-block bg-[#FF6E00] text-white rounded-full px-6 py-2 text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer"
             >
-              Start Free
+              Get a Free Audit
             </Link>
             <button
               type="button"
@@ -170,7 +170,7 @@ export default function Navbar() {
                   className="bg-[#FF6E00] text-white rounded-full px-6 py-3 text-sm font-medium text-center hover:opacity-90 transition-opacity"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Start Free
+                  Get a Free Audit
                 </Link>
               </div>
             </motion.div>

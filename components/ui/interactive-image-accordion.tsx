@@ -16,7 +16,7 @@ const pillars: AccordionPillar[] = [
     id: 1,
     title: "AI Visibility",
     description:
-      "See exactly how ChatGPT, Perplexity, Gemini, and Copilot describe your brand today, and where you're being left out of the answer.",
+      "See exactly how ChatGPT, Perplexity and Gemini describe your brand today, and which questions you are being left out of entirely.",
     imageUrl:
       "https://images.unsplash.com/photo-1666601384272-e3e55227d33a?q=80&w=1200&auto=format&fit=crop",
   },

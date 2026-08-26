@@ -40,7 +40,7 @@ export default function HeroSection() {
               <strong className="font-semibold text-xl text-black">visibility</strong>{" "}
               inside{" "}
               <strong className="font-semibold text-xl text-black">
-                ChatGPT, Perplexity, Gemini, and Copilot
+                ChatGPT, Perplexity and Gemini
               </strong>
               , turning AI answers into{" "}
               <span className="font-semibold text-xl text-[#FF6E00] underline decoration-2 underline-offset-4 decoration-[#FF6E00]">
@@ -52,7 +52,7 @@ export default function HeroSection() {
               href="/contact"
               className="inline-block bg-black text-white font-medium px-8 py-3 rounded-full hover:bg-[#FF6E00] transition-colors duration-300"
             >
-              Start Free
+              Get a Free Audit
             </Link>
           </motion.div>
 

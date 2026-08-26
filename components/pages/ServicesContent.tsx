@@ -319,7 +319,7 @@ export default function ServicesContent() {
             href="/contact"
             className="inline-flex w-fit items-center gap-3 self-start bg-black text-white text-base font-medium pl-8 pr-2 py-2 rounded-full hover:bg-[#FF6E00] transition-colors duration-200"
           >
-            Start Free
+            Get a Free Audit
             <span className="bg-white rounded-full p-2">
               <ArrowRight className="w-5 h-5 text-black" />
             </span>

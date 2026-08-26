@@ -140,7 +140,7 @@ export default function ContactContent() {
         >
           <p className="mb-4">
             <span className="block text-black font-medium mb-1">Email</span>
-            Cinder@Cindersource.com
+            cinder@cindersource.com
           </p>
           <p className="mb-4">
             <span className="block text-black font-medium mb-1">

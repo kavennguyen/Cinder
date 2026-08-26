@@ -12,7 +12,7 @@ const faqs = [
   {
     question: "What is AI visibility, and why does it matter?",
     answer:
-      "AI visibility (also called AEO, or answer engine optimization) is how often, and how accurately, your brand gets mentioned when people ask ChatGPT, Perplexity, Gemini, or Copilot a question. As more people start their search inside an AI answer instead of a search engine, being the name AI recommends is becoming as important as ranking on Google once was.",
+      "AI visibility (also called AEO, or answer engine optimization) is how often, and how accurately, your brand gets mentioned when people ask ChatGPT, Perplexity or Gemini a question. As more people start their search inside an AI answer instead of a search engine, being the name AI recommends is becoming as important as ranking on Google once was.",
   },
   {
     question: "How is this different from traditional SEO?",
@@ -22,7 +22,7 @@ const faqs = [
   {
     question: "Which AI engines does Cinder track?",
     answer:
-      "Cinder tracks citations and mentions across ChatGPT, Perplexity, Gemini, and Copilot, with coverage expanding as new AI engines gain adoption.",
+      "Cinder tracks citations and mentions across ChatGPT, Perplexity and Gemini today. Claude and Copilot are next, and coverage expands as new AI engines gain adoption.",
   },
   {
     question:
