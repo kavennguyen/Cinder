@@ -3,9 +3,7 @@ import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import { HeroBloom } from "@/components/ui/glass-hero";
 import HeroSection from "@/components/HeroSection";
-import TwoPathsSection from "@/components/TwoPathsSection";
-import ValueCardsSection from "@/components/ValueCardsSection";
-import ProcessSection from "@/components/ProcessSection";
+import BentoSection from "@/components/BentoSection";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -27,11 +25,9 @@ export default function Home() {
       <Navbar />
       <div className="relative z-10 flex flex-col">
         <HeroSection />
-        {/* Narrative order: hook, then what Cinder is and how it works, then
-            which of the two tracks you are, then why it compounds. */}
-        <ProcessSection />
-        <TwoPathsSection />
-        <ValueCardsSection />
+        {/* One bento carries what used to be three stacked sections: what
+            Cinder is and the four steps, both tracks, and the value props. */}
+        <BentoSection />
         <Footer />
       </div>
     </div>
