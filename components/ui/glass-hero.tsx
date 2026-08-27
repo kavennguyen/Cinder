@@ -16,8 +16,8 @@ import type { ReactNode } from "react";
  *  opacity and masked away before the copy starts, so it reads as texture and
  *  gives the glass panels something to blur against on an otherwise flat white
  *  page. The brand colour comes from the blooms layered over it. */
-const BACKDROP =
-  "https://images.pexels.com/photos/1519088/pexels-photo-1519088.jpeg?auto=compress&cs=tinysrgb&w=1920";
+const backdropAt = (w: number) =>
+  `https://images.pexels.com/photos/1519088/pexels-photo-1519088.jpeg?auto=compress&cs=tinysrgb&w=${w}`;
 
 export function HeroBloom() {
   return (
@@ -25,18 +25,40 @@ export function HeroBloom() {
       aria-hidden="true"
       className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[760px] md:h-[920px] overflow-hidden"
     >
-      <div
-        className="absolute inset-0 bg-cover bg-center opacity-[0.14] grayscale"
+      {/* srcset so a phone fetches an 800px skyline instead of the 1920px one.
+          The image is greyscaled and masked down to texture, so the small
+          source is indistinguishable at mobile sizes. */}
+      <img
+        src={backdropAt(1920)}
+        srcSet={`${backdropAt(800)} 800w, ${backdropAt(1280)} 1280w, ${backdropAt(1920)} 1920w`}
+        sizes="100vw"
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full object-cover opacity-[0.14] grayscale"
         style={{
-          backgroundImage: `url(${BACKDROP})`,
           maskImage:
             "linear-gradient(180deg, black 0%, black 45%, transparent 92%)",
           WebkitMaskImage:
             "linear-gradient(180deg, black 0%, black 45%, transparent 92%)",
         }}
       />
-      <div className="absolute -top-24 right-0 h-[32rem] w-[32rem] rounded-full bg-[#FF6E00]/20 blur-[140px]" />
-      <div className="absolute top-40 -left-24 h-[24rem] w-[24rem] rounded-full bg-[#FF6E00]/10 blur-[130px]" />
+      {/* Radial gradients rather than a solid circle behind a blur() filter.
+          A 140px blur over a 576px element is a real per-frame cost on phones
+          and the gradient is visually the same thing for free. */}
+      <div
+        className="absolute -top-24 right-0 h-[32rem] w-[32rem]"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(255,110,0,0.20) 0%, rgba(255,110,0,0.10) 45%, rgba(255,110,0,0) 70%)",
+        }}
+      />
+      <div
+        className="absolute top-40 -left-24 h-[24rem] w-[24rem]"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(255,110,0,0.11) 0%, rgba(255,110,0,0.05) 45%, rgba(255,110,0,0) 70%)",
+        }}
+      />
     </div>
   );
 }
@@ -50,7 +72,12 @@ export function GlassPanel({
 }) {
   return (
     <div
-      className={`relative overflow-hidden rounded-3xl border border-black/10 bg-white/70 shadow-[0_18px_50px_-24px_rgba(0,0,0,0.25)] backdrop-blur-xl ${className}`}
+      // backdrop-blur is one of the most expensive things a phone can be asked
+      // to do, and it re-samples on every scroll frame. On mobile the panels
+      // span nearly the full width, so there is barely any backdrop showing
+      // through to justify it — a near-opaque surface reads the same. The
+      // glass effect is kept from md up, where it is both visible and cheap.
+      className={`relative overflow-hidden rounded-3xl border border-black/10 bg-white/90 shadow-[0_18px_50px_-24px_rgba(0,0,0,0.25)] md:bg-white/70 md:backdrop-blur-xl ${className}`}
     >
       {children}
     </div>

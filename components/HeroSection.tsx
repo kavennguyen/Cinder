@@ -7,6 +7,7 @@ import { ArrowRight, Check, X as XIcon } from "lucide-react";
 import { aiPlatforms } from "@/components/AiEngineIcons";
 import { GlassPanel, HeroBadge } from "@/components/ui/glass-hero";
 import { VerticalCutReveal } from "@/components/ui/vertical-cut-reveal";
+import { useInView } from "@/lib/use-in-view";
 
 /**
  * Illustrative only — a drawing of what the dashboard reports, not a real
@@ -20,6 +21,8 @@ const sampleReadout = [
 ];
 
 export default function HeroSection() {
+  const [marqueeRef, marqueeInView] = useInView<HTMLDivElement>();
+
   return (
     <section className="relative px-6 pt-10 pb-16 md:pb-24">
       <div className="relative z-10 max-w-[88rem] mx-auto">
@@ -78,7 +81,7 @@ export default function HeroSection() {
               </Link>
               <Link
                 href="/services"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-black/15 bg-white/60 px-8 py-4 text-sm font-semibold text-black backdrop-blur-sm transition-colors duration-300 hover:border-black/30 hover:bg-white"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-black/15 bg-white/90 px-8 py-4 text-sm font-semibold text-black transition-colors duration-300 hover:border-black/30 hover:bg-white md:bg-white/60 md:backdrop-blur-sm"
               >
                 See how it works
               </Link>
@@ -151,6 +154,7 @@ export default function HeroSection() {
               </h2>
 
               <div
+                ref={marqueeRef}
                 className="relative flex overflow-hidden"
                 style={{
                   maskImage:
@@ -165,7 +169,16 @@ export default function HeroSection() {
                     to { transform: translateX(-50%); }
                   }
                 `}</style>
-                <div className="flex w-max animate-[hero-engines-marquee_26s_linear_infinite] gap-10 px-4">
+                {/* Parked once the hero scrolls away. It sits behind a mask,
+                    so every frame it runs forces the masked region to
+                    re-rasterise — for the whole visit, not just the hero. */}
+                <div
+                  className="flex w-max animate-[hero-engines-marquee_26s_linear_infinite] gap-10 px-4"
+                  style={{
+                    animationPlayState: marqueeInView ? "running" : "paused",
+                    willChange: marqueeInView ? "transform" : "auto",
+                  }}
+                >
                   {[...aiPlatforms, ...aiPlatforms].map((platform, i) => (
                     <span
                       key={i}

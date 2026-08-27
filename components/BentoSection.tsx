@@ -146,13 +146,19 @@ function PhotoVisual({
     // justify-end, leaving the two photo cards' CTAs on different baselines.
     <div className="relative">
       <div className="relative overflow-hidden rounded-2xl">
+        {/* transition-[filter] rather than transition-all: `all` makes the
+            browser watch every animatable property on a filtered bitmap.
+            srcset keeps phones off the 900px source for a ~250px slot. */}
         <img
-          src={src}
+          src={`${src}&w=900`}
+          srcSet={`${src}&w=500 500w, ${src}&w=900 900w`}
+          sizes="(max-width: 768px) 90vw, 30vw"
           alt={alt}
           loading="lazy"
-          className="h-40 w-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0"
+          decoding="async"
+          className="h-40 w-full object-cover grayscale transition-[filter] duration-500 group-hover:grayscale-0"
         />
-        <span className="absolute left-3 top-3 flex h-9 w-9 items-center justify-center rounded-lg border border-[#FF6E00]/25 bg-white/85 backdrop-blur">
+        <span className="absolute left-3 top-3 flex h-9 w-9 items-center justify-center rounded-lg border border-[#FF6E00]/25 bg-white/95 md:bg-white/85 md:backdrop-blur">
           <Icon className="h-4 w-4 text-[#FF6E00]" />
         </span>
       </div>
@@ -247,7 +253,7 @@ const cells: BentoCell[] = [
     span: 3,
     visual: (
       <PhotoVisual
-        src="https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=900"
+        src="https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb"
         alt="An agency team reviewing client work together"
         icon={Users}
         cta="Explore the dashboard"
@@ -266,7 +272,7 @@ const cells: BentoCell[] = [
     span: 3,
     visual: (
       <PhotoVisual
-        src="https://images.pexels.com/photos/3912976/pexels-photo-3912976.jpeg?auto=compress&cs=tinysrgb&w=900"
+        src="https://images.pexels.com/photos/3912976/pexels-photo-3912976.jpeg?auto=compress&cs=tinysrgb"
         alt="A small business owner at work"
         icon={UserCheck}
         cta="Explore the service"
