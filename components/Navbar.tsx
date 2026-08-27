@@ -30,7 +30,7 @@ export default function Navbar() {
       <motion.nav
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="relative z-30 px-6 py-6 w-full"
+        className="sticky top-0 z-50 px-6 py-4 w-full"
       >
         <div className="bg-black rounded-full px-6 py-3 flex items-center justify-between max-w-5xl mx-auto">
           <div className="flex items-center gap-8">
