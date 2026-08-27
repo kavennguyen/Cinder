@@ -2,24 +2,23 @@
 
 import Link from "next/link";
 import { motion } from "motion/react";
-import {
-  Activity,
-  ArrowRight,
-  Briefcase,
-  CalendarClock,
-  FileText,
-  GraduationCap,
-  LayoutDashboard,
-  Phone,
-  Quote,
-  Target,
-  TrendingUp,
-  UserCheck,
-  Users,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import PageShell from "@/components/PageShell";
-import { FeatureGrid, type Feature } from "@/components/ui/feature-grid";
+import {
+  ServicesCarousel,
+  type ServiceCardData,
+} from "@/components/ui/services-carousel";
+import {
+  CallsVisual,
+  HandledVisual,
+  NoLoginVisual,
+  OngoingVisual,
+  PriorityVisual,
+  RosterVisual,
+  ShareOfVoiceVisual,
+  WhiteLabelVisual,
+} from "@/components/ui/service-visuals";
 import { revealVariants } from "@/lib/motion";
 
 const chartLines = [
@@ -61,81 +60,68 @@ const statCards = [
   },
 ];
 
-const agencyFeatures: Feature[] = [
+/* Four cards per track, each with a drawn visual in the bento's idiom.
+   Four rather than three so the carousel has somewhere to go: three visible
+   per view on desktop would leave nothing to scroll and dead arrows. */
+const agencyCards: ServiceCardData[] = [
   {
-    icon: LayoutDashboard,
+    number: "001",
     title: "Every client in one place",
     description:
       "Track AI visibility across your whole roster without switching tools or re-running prompts by hand.",
+    visual: <RosterVisual />,
   },
   {
-    icon: TrendingUp,
+    number: "002",
     title: "Competitor benchmarking",
     description:
       "See your share of AI voice next to the brands you are up against, so progress is measured, not asserted.",
+    visual: <ShareOfVoiceVisual />,
   },
   {
-    icon: Quote,
-    title: "Citation sources",
-    description:
-      "See which pages the engines actually quote, and which questions your client is missing from entirely.",
-  },
-  {
-    icon: Target,
-    title: "Highest impact actions",
-    description:
-      "The gaps are ranked, so your team spends its hours on the work most likely to move a score.",
-  },
-  {
-    icon: FileText,
+    number: "003",
     title: "White label reporting",
     description:
       "Send clients a report under your own brand. Cinder does the measuring and stays out of the way.",
+    visual: <WhiteLabelVisual />,
   },
   {
-    icon: Users,
-    title: "Unlimited client workspaces",
+    number: "004",
+    title: "Highest impact actions",
     description:
-      "Add every client you manage. Pro has no per-client pricing and no seat maths to work around.",
+      "The gaps are ranked, so your team spends its hours on the work most likely to move a score.",
+    visual: <PriorityVisual />,
   },
 ];
 
-const smallBusinessFeatures: Feature[] = [
+const smallBusinessCards: ServiceCardData[] = [
   {
-    icon: UserCheck,
+    number: "001",
     title: "Our team runs it",
     description:
       "The same platform that powers the dashboard, operated for you by the people who built it.",
+    visual: <HandledVisual />,
   },
   {
-    icon: GraduationCap,
+    number: "002",
     title: "Nothing new to learn",
     description:
       "No dashboard to log into and no new discipline to hire for. You never have to touch the tooling.",
+    visual: <NoLoginVisual />,
   },
   {
-    icon: CalendarClock,
-    title: "An ongoing retainer",
-    description:
-      "Billed monthly rather than as a one time project, because AI engines keep changing their answers.",
-  },
-  {
-    icon: Phone,
+    number: "003",
     title: "Monthly strategy calls",
     description:
       "A standing call to walk through what moved, what we changed, and what is worth doing next.",
+    visual: <CallsVisual />,
   },
   {
-    icon: Activity,
+    number: "004",
     title: "Continuous adjustments",
     description:
       "We keep monitoring after the first fixes ship and adjust as the engines shift what they cite.",
-  },
-  {
-    icon: Briefcase,
-    title: "You run your business",
-    description:
-      "You stay focused on the work you actually do. We make sure AI recommends it when someone asks.",
+    visual: <OngoingVisual />,
   },
 ];
 
@@ -269,114 +255,95 @@ export default function ServicesContent() {
         </div>
       </motion.div>
 
-      {/* Tracks side by side. The parent defines three rows (header, cards,
-          CTA) and each track spans them with grid-rows-subgrid, so both
-          columns share row tracks and their grids line up even though the
-          headings and intro copy differ in length. */}
-      <div className="pt-16 border-t border-black/10 grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-[auto_auto_auto] gap-12 lg:gap-x-10 lg:gap-y-0">
-        {/* Track 1 - Agencies */}
-        <motion.div
-          id="agencies"
-          custom={2}
-          initial="hidden"
-          animate="visible"
-          variants={revealVariants}
-          className="scroll-mt-32 lg:row-span-3 lg:grid lg:grid-rows-subgrid"
-        >
-          <div className="mb-8">
-            <p className="flex items-center gap-2.5 text-[#FF6E00] text-sm font-medium uppercase tracking-[0.15em] mb-3">
-              <span aria-hidden="true" className="h-px w-6 bg-[#FF6E00]" />
-              For Agencies
-            </p>
-            <h2
-              className="text-black text-3xl md:text-4xl font-medium leading-tight mb-4"
-              style={{ letterSpacing: "-0.02em" }}
-            >
-              Every client&apos;s{" "}
-              <span className="text-[#FF6E00]">AI visibility</span>, in one
-              place.
-            </h2>
-            <p className="text-black/70 text-lg leading-relaxed">
-              The Cinder dashboard is built for agencies who want to offer{" "}
-              <strong className="font-semibold text-xl text-black">
-                AI visibility
-              </strong>{" "}
-              as a service without building the machinery themselves. What used
-              to take scattered tools, manual prompting, and guesswork becomes
-              one{" "}
-              <span className="font-semibold text-xl text-[#FF6E00] underline decoration-2 underline-offset-4 decoration-[#FF6E00]">
-                clean, repeatable workflow
-              </span>
-              .
-            </p>
-          </div>
-
-          <div className="mb-8">
-            <FeatureGrid features={agencyFeatures} columns={2} glow />
-          </div>
-
-          <Link
-            href="/contact"
-            className="inline-flex w-fit items-center gap-3 self-start bg-black text-white text-base font-medium pl-8 pr-2 py-2 rounded-full hover:bg-[#FF6E00] transition-colors duration-200"
+      {/* Two stacked full-width tracks, each with its own carousel. The
+          headings and intro copy are the ones this page carried before the
+          single-carousel pass; only the cards beneath them changed. One CTA
+          serves both, rather than the duplicate button the page used to end
+          each track with. */}
+      <motion.div
+        id="agencies"
+        custom={2}
+        initial="hidden"
+        animate="visible"
+        variants={revealVariants}
+        className="scroll-mt-32 pt-16 border-t border-black/10"
+      >
+        <div className="mb-8 max-w-2xl">
+          <p className="flex items-center gap-2.5 text-[#FF6E00] text-sm font-medium uppercase tracking-[0.15em] mb-3">
+            <span aria-hidden="true" className="h-px w-6 bg-[#FF6E00]" />
+            For Agencies
+          </p>
+          <h2
+            className="text-black text-3xl md:text-4xl font-bold leading-tight mb-4"
+            style={{ letterSpacing: "-0.02em" }}
           >
-            Get a Free Audit
-            <span className="bg-white rounded-full p-2">
-              <ArrowRight className="w-5 h-5 text-black" />
+            Every client&apos;s{" "}
+            <span className="text-[#FF6E00]">AI visibility</span>, in one place.
+          </h2>
+          <p className="text-black/70 text-lg leading-relaxed">
+            The Cinder dashboard is built for agencies who want to offer{" "}
+            <strong className="font-semibold text-xl text-black">
+              AI visibility
+            </strong>{" "}
+            as a service without building the machinery themselves. What used to
+            take scattered tools, manual prompting, and guesswork becomes one{" "}
+            <span className="font-semibold text-xl text-[#FF6E00] underline decoration-2 underline-offset-4 decoration-[#FF6E00]">
+              clean, repeatable workflow
             </span>
-          </Link>
-        </motion.div>
+            .
+          </p>
+        </div>
 
-        {/* Track 2 - Small Business */}
-        <motion.div
-          id="small-business"
-          custom={3}
-          initial="hidden"
-          animate="visible"
-          variants={revealVariants}
-          className="scroll-mt-32 lg:row-span-3 lg:grid lg:grid-rows-subgrid lg:border-l lg:border-black/10 lg:pl-10"
-        >
-          <div className="mb-8">
-            <p className="flex items-center gap-2.5 text-[#FF6E00] text-sm font-medium uppercase tracking-[0.15em] mb-3">
-              <span aria-hidden="true" className="h-px w-6 bg-[#FF6E00]" />
-              For Small Business
-            </p>
-            <h2
-              className="text-black text-3xl md:text-4xl font-medium leading-tight mb-4"
-              style={{ letterSpacing: "-0.02em" }}
-            >
-              <span className="text-[#FF6E00]">AI visibility</span>, done for
-              you.
-            </h2>
-            <p className="text-black/70 text-lg leading-relaxed">
-              Most small businesses don&apos;t have the time or the specialist
-              knowledge to optimize for{" "}
-              <strong className="font-semibold text-xl text-black">
-                AI search
-              </strong>
-              , and they shouldn&apos;t have to. Our team does it for them, so
-              you show up in{" "}
-              <span className="font-semibold text-xl text-[#FF6E00] underline decoration-2 underline-offset-4 decoration-[#FF6E00]">
-                the recommendations they trust
-              </span>
-              .
-            </p>
-          </div>
+        <ServicesCarousel cards={agencyCards} label="For agencies" />
+      </motion.div>
 
-          <div className="mb-8">
-            <FeatureGrid features={smallBusinessFeatures} columns={2} />
-          </div>
-
-          <Link
-            href="/contact"
-            className="inline-flex w-fit items-center gap-3 self-start bg-black text-white text-base font-medium pl-8 pr-2 py-2 rounded-full hover:bg-[#FF6E00] transition-colors duration-200"
+      <motion.div
+        id="small-business"
+        custom={3}
+        initial="hidden"
+        animate="visible"
+        variants={revealVariants}
+        className="scroll-mt-32 pt-16 mt-16 border-t border-black/10"
+      >
+        <div className="mb-8 max-w-2xl">
+          <p className="flex items-center gap-2.5 text-[#FF6E00] text-sm font-medium uppercase tracking-[0.15em] mb-3">
+            <span aria-hidden="true" className="h-px w-6 bg-[#FF6E00]" />
+            For Small Business
+          </p>
+          <h2
+            className="text-black text-3xl md:text-4xl font-bold leading-tight mb-4"
+            style={{ letterSpacing: "-0.02em" }}
           >
-            Get a Free Audit
-            <span className="bg-white rounded-full p-2">
-              <ArrowRight className="w-5 h-5 text-black" />
+            <span className="text-[#FF6E00]">AI visibility</span>, done for you.
+          </h2>
+          <p className="text-black/70 text-lg leading-relaxed">
+            Most small businesses don&apos;t have the time or the specialist
+            knowledge to optimize for{" "}
+            <strong className="font-semibold text-xl text-black">
+              AI search
+            </strong>
+            , and they shouldn&apos;t have to. Our team does it for them, so you
+            show up in{" "}
+            <span className="font-semibold text-xl text-[#FF6E00] underline decoration-2 underline-offset-4 decoration-[#FF6E00]">
+              the recommendations they trust
             </span>
-          </Link>
-        </motion.div>
-      </div>
+            .
+          </p>
+        </div>
+
+        <ServicesCarousel cards={smallBusinessCards} label="For small business" />
+
+        <Link
+          href="/contact"
+          className="mt-14 inline-flex w-fit items-center gap-3 bg-black text-white text-base font-medium pl-8 pr-2 py-2 rounded-full hover:bg-[#FF6E00] transition-colors duration-200"
+        >
+          Get a Free Audit
+          <span className="bg-white rounded-full p-2">
+            <ArrowRight className="w-5 h-5 text-black" />
+          </span>
+        </Link>
+      </motion.div>
+
     </PageShell>
   );
 }
