@@ -155,9 +155,15 @@ export default function PricingContent() {
           return (
             <div
               key={plan.id}
-              className={`flex h-full flex-col rounded-3xl border bg-white p-8 md:p-10 ${
-                primary ? "border-[#FF6E00]" : "border-black/10"
-              }`}
+              /* Both cards carry the full orange border, so neither takes the
+                 bento's hover:border-[#FF6E00]/40 — going to 40% would fade a
+                 solid border and make the card recede rather than lift. The
+                 glow alone carries the hover.
+
+                 Transition scoped to the property that actually changes;
+                 `transition-all` makes the browser watch every animatable
+                 property on the card for no visual gain. */
+              className="flex h-full flex-col rounded-3xl border border-[#FF6E00] bg-white p-8 md:p-10 transition-[box-shadow] duration-300 hover:shadow-[0_10px_34px_-8px_rgba(255,110,0,0.28)]"
             >
               <h2 className="text-black text-2xl font-bold mb-1.5">
                 {plan.name}
