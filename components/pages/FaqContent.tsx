@@ -28,12 +28,12 @@ const faqs = [
     question:
       "What's the difference between the Dashboard and the Managed Service?",
     answer:
-      "The Dashboard is self serve: built for agencies and teams who want to track visibility themselves, benchmark competitors, and manage multiple clients or brands in one place. The Managed Service is done for you: our team runs the optimization directly on your behalf, so you don't need to learn a new discipline or hire for it.",
+      "Managed and Managed Plus are the same service at two sizes. Both are done for you: our team measures your visibility, writes and ships the site changes, and reports what moved. Managed Plus adds more tracked prompts, more changes each month, per-location prompt sets and a second monthly call.",
   },
   {
     question: "How much does Cinder cost?",
     answer:
-      "Plans start at $800/month for Dashboard Starter, $1,500/month for Dashboard Pro, and $2,000/month for the fully Managed Service, with a 10% discount on annual billing. See the Pricing page for full plan details.",
+      "Cinder is a managed service in two levels, priced in Canadian dollars, month to month, plus HST. There is also a one-time audit and setup week to start. See the Pricing page for current figures and what each level includes.",
   },
   {
     question: "Is there a contract or lock-in period?",

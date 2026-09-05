@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     absolute: "AI Visibility Tracking for Canadian Brands | Cinder",
   },
   description:
-    "Be the answer AI gives. Cinder helps Canadian brands and agencies earn visibility inside ChatGPT, Perplexity and Gemini.",
+    "Be the answer AI gives. Cinder helps Canadian businesses earn visibility inside ChatGPT, Perplexity and Gemini.",
 };
 
 export default function Home() {

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PUBLIC_PLANS, dollars } from "@/lib/pricing";
 import "./globals.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -10,13 +11,13 @@ export const metadata: Metadata = {
     template: "%s | Cinder",
   },
   description:
-    "Cinder helps Canadian brands and agencies earn visibility inside ChatGPT, Perplexity and Gemini, turning AI answers into your next customer.",
+    "Cinder helps Canadian businesses earn visibility inside ChatGPT, Perplexity and Gemini, turning AI answers into your next customer.",
   openGraph: {
     type: "website",
     siteName: "Cinder",
     title: "Cinder — The AI Visibility Platform for Canada",
     description:
-      "Track and grow your brand's visibility across ChatGPT, Perplexity and Gemini. A dashboard for agencies, a done for you service for small business.",
+      "Track and grow your brand's visibility across ChatGPT, Perplexity and Gemini. A done for you service for Canadian small businesses.",
     url: SITE_URL,
   },
 };
@@ -28,7 +29,7 @@ const organizationJsonLd = {
   url: SITE_URL,
   logo: `${SITE_URL}/images/cinder-logo.png`,
   description:
-    "Answer engine optimization (AEO) platform for Canadian brands and agencies. Tracks brand mentions and citations across ChatGPT, Perplexity and Gemini, and implements the website changes that improve them.",
+    "Answer engine optimization (AEO) for Canadian businesses. Tracks brand mentions and citations across ChatGPT, Perplexity and Gemini, and implements the website changes that improve them.",
   email: "cinder@cindersource.com",
   address: {
     "@type": "PostalAddress",
@@ -60,29 +61,15 @@ const serviceJsonLd = {
   areaServed: { "@type": "Country", name: "Canada" },
   description:
     "Tracks how often a brand is named by ChatGPT, Perplexity and Gemini, then implements the website changes that improve it.",
-  offers: [
-    {
-      "@type": "Offer",
-      name: "Dashboard Starter",
-      price: "800",
-      priceCurrency: "CAD",
-      url: `${SITE_URL}/pricing`,
-    },
-    {
-      "@type": "Offer",
-      name: "Dashboard Pro",
-      price: "1500",
-      priceCurrency: "CAD",
-      url: `${SITE_URL}/pricing`,
-    },
-    {
-      "@type": "Offer",
-      name: "Managed Service",
-      price: "2000",
-      priceCurrency: "CAD",
-      url: `${SITE_URL}/pricing`,
-    },
-  ],
+  // Derived from lib/pricing so the structured data cannot fall out of step
+  // with the page. Only public plans are advertised.
+  offers: PUBLIC_PLANS.map((plan) => ({
+    "@type": "Offer",
+    name: plan.name,
+    price: String(dollars(plan.priceCents)),
+    priceCurrency: "CAD",
+    url: `${SITE_URL}/pricing`,
+  })),
 };
 
 export default function RootLayout({

@@ -1,3 +1,9 @@
+import {
+  PUBLIC_PLANS,
+  ONBOARDING_FEE_CENTS,
+  formatCAD,
+} from "@/lib/pricing";
+
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 /**
@@ -9,12 +15,11 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
  */
 const body = `# Cinder
 
-> Answer engine optimization (AEO) for Canadian brands and agencies. Cinder
+> Answer engine optimization (AEO) for Canadian businesses. Cinder
 > measures how often ChatGPT, Perplexity and Gemini name your brand, then
 > implements the website changes that improve it.
 
-Cinder is based in Toronto, Canada, and serves Canadian brands and the
-agencies working with them.
+Cinder is based in Toronto, Canada, and serves Canadian small businesses.
 
 ## What Cinder does
 
@@ -30,17 +35,16 @@ agencies working with them.
 - Gemini (live)
 - Claude and Copilot are not yet supported.
 
-## Two ways to work with Cinder
+## How Cinder works with you
 
-- **Dashboard** — self serve, built for agencies tracking multiple clients.
-- **Managed service** — Cinder's team runs the optimization for you.
+- **Managed service** — Cinder's team measures your AI visibility, writes and
+  ships the site changes, and reports what moved. Two levels.
 
-## Pricing (CAD, per month)
+## Pricing (CAD, per month, plus HST)
 
-- Dashboard Starter: $800
-- Dashboard Pro: $1,500
-- Managed Service: $2,000
-- 10% discount on annual billing. No lock-in on dashboard plans.
+${PUBLIC_PLANS.map((p) => `- ${p.name}: ${formatCAD(p.priceCents)}`).join("\n")}
+- One-time ${formatCAD(ONBOARDING_FEE_CENTS)} audit and setup week to start.
+- Month to month, no lock-in.
 
 ## Pages
 

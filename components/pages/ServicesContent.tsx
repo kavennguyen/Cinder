@@ -14,10 +14,6 @@ import {
   HandledVisual,
   NoLoginVisual,
   OngoingVisual,
-  PriorityVisual,
-  RosterVisual,
-  ShareOfVoiceVisual,
-  WhiteLabelVisual,
 } from "@/components/ui/service-visuals";
 import { revealVariants } from "@/lib/motion";
 
@@ -63,37 +59,6 @@ const statCards = [
 /* Four cards per track, each with a drawn visual in the bento's idiom.
    Four rather than three so the carousel has somewhere to go: three visible
    per view on desktop would leave nothing to scroll and dead arrows. */
-const agencyCards: ServiceCardData[] = [
-  {
-    number: "001",
-    title: "Every client in one place",
-    description:
-      "Track AI visibility across your whole roster without switching tools or re-running prompts by hand.",
-    visual: <RosterVisual />,
-  },
-  {
-    number: "002",
-    title: "Competitor benchmarking",
-    description:
-      "See your share of AI voice next to the brands you are up against, so progress is measured, not asserted.",
-    visual: <ShareOfVoiceVisual />,
-  },
-  {
-    number: "003",
-    title: "White label reporting",
-    description:
-      "Send clients a report under your own brand. Cinder does the measuring and stays out of the way.",
-    visual: <WhiteLabelVisual />,
-  },
-  {
-    number: "004",
-    title: "Highest impact actions",
-    description:
-      "The gaps are ranked, so your team spends its hours on the work most likely to move a score.",
-    visual: <PriorityVisual />,
-  },
-];
-
 const smallBusinessCards: ServiceCardData[] = [
   {
     number: "001",
@@ -154,12 +119,12 @@ export default function ServicesContent() {
           <strong className="font-semibold text-xl md:text-2xl text-black">
             AI visibility platform
           </strong>{" "}
-          for the age of answer engines. However you want to win{" "}
+          for the age of answer engines. We measure where you stand across{" "}
           <span className="font-semibold text-xl md:text-2xl text-[#FF6E00] underline decoration-2 underline-offset-4 decoration-[#FF6E00]">
             AI search
           </span>
-          , we have a way in: a dashboard for agencies, and a done for you
-          service for small businesses.
+          , then our team does the work that gets you named. You never have to
+          touch the tooling.
         </p>
       </motion.div>
 
@@ -255,55 +220,13 @@ export default function ServicesContent() {
         </div>
       </motion.div>
 
-      {/* Two stacked full-width tracks, each with its own carousel. The
-          headings and intro copy are the ones this page carried before the
-          single-carousel pass; only the cards beneath them changed. One CTA
-          serves both, rather than the duplicate button the page used to end
-          each track with. */}
-      <motion.div
-        id="agencies"
-        custom={2}
-        initial="hidden"
-        animate="visible"
-        variants={revealVariants}
-        className="scroll-mt-32 pt-16 border-t border-black/10"
-      >
-        <div className="mb-8 max-w-2xl">
-          <p className="flex items-center gap-2.5 text-[#FF6E00] text-sm font-medium uppercase tracking-[0.15em] mb-3">
-            <span aria-hidden="true" className="h-px w-6 bg-[#FF6E00]" />
-            For Agencies
-          </p>
-          <h2
-            className="text-black text-3xl md:text-4xl font-bold leading-tight mb-4"
-            style={{ letterSpacing: "-0.02em" }}
-          >
-            Every client&apos;s{" "}
-            <span className="text-[#FF6E00]">AI visibility</span>, in one place.
-          </h2>
-          <p className="text-black/70 text-lg leading-relaxed">
-            The Cinder dashboard is built for agencies who want to offer{" "}
-            <strong className="font-semibold text-xl text-black">
-              AI visibility
-            </strong>{" "}
-            as a service without building the machinery themselves. What used to
-            take scattered tools, manual prompting, and guesswork becomes one{" "}
-            <span className="font-semibold text-xl text-[#FF6E00] underline decoration-2 underline-offset-4 decoration-[#FF6E00]">
-              clean, repeatable workflow
-            </span>
-            .
-          </p>
-        </div>
-
-        <ServicesCarousel cards={agencyCards} label="For agencies" />
-      </motion.div>
-
       <motion.div
         id="small-business"
         custom={3}
         initial="hidden"
         animate="visible"
         variants={revealVariants}
-        className="scroll-mt-32 pt-16 mt-16 border-t border-black/10"
+        className="scroll-mt-32 pt-16 border-t border-black/10"
       >
         <div className="mb-8 max-w-2xl">
           <p className="flex items-center gap-2.5 text-[#FF6E00] text-sm font-medium uppercase tracking-[0.15em] mb-3">

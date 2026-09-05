@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
-import { ArrowRight, Check, Quote, Users, UserCheck } from "lucide-react";
+import { ArrowRight, Check, Quote, UserCheck } from "lucide-react";
 
 import { BentoGrid, VisualFade, type BentoCell } from "@/components/ui/bento-grid";
 import { CanadaGlobe } from "@/components/ui/canada-globe";
@@ -240,28 +240,6 @@ const cells: BentoCell[] = [
     ),
   },
   {
-    title: "For agencies",
-    // "Unlimited clients" is a Dashboard Pro feature, not a blanket one —
-    // Starter tracks a single client. Scoped here to match PricingContent.
-    description: (
-      <>
-        Track every client&apos;s AI visibility in one dashboard, benchmark
-        share of voice, and report under your own brand.{" "}
-        <Accent>Unlimited clients on Pro</Accent>.
-      </>
-    ),
-    span: 3,
-    visual: (
-      <PhotoVisual
-        src="https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb"
-        alt="An agency team reviewing client work together"
-        icon={Users}
-        cta="Explore the dashboard"
-        href="/services#agencies"
-      />
-    ),
-  },
-  {
     title: "For small business",
     description: (
       <>
@@ -269,7 +247,7 @@ const cells: BentoCell[] = [
         pages AI needs to quote you, then sends the record of what changed.
       </>
     ),
-    span: 3,
+    span: 4,
     visual: (
       <PhotoVisual
         src="https://images.pexels.com/photos/3912976/pexels-photo-3912976.jpeg?auto=compress&cs=tinysrgb"
@@ -299,14 +277,14 @@ const cells: BentoCell[] = [
         you are <Strong>missing from entirely</Strong>.
       </>
     ),
-    span: 2,
+    span: 3,
     visual: <CitationsVisual />,
   },
   {
     title: "Every change, on the record",
     description:
       "Each fix is logged with the pages it touched and the date, so a move in your score ties back to the work behind it.",
-    span: 2,
+    span: 3,
     visual: <ChangeLogVisual />,
   },
 ];

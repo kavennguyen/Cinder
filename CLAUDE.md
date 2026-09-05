@@ -43,6 +43,19 @@ out and get on with it:
 The rule is about *intent and content* — what to say, what to build, how much
 of it. Not about *how to build it*.
 
+## Prices live in one file
+
+`lib/pricing.ts` is the single source of truth. The pricing page, the
+schema.org Offers in `app/layout.tsx` and the pricing block in
+`app/llms.txt/route.ts` all import from it. **Never write a price literal
+anywhere else** — it used to be duplicated across four files and three of
+them went stale on every change.
+
+The public prices are **provisional** as of Sept 2026. Kaven has not settled
+them. Changing one means editing a single constant at the top of that file.
+
+`FaqContent.tsx` deliberately quotes no figure, and should stay that way.
+
 ## Only claim what the product does
 
 The marketing site has repeatedly overstated the product. Before writing any
